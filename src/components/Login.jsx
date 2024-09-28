@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { ToastContainer } from 'react-toastify';
 
 const Login = ({onRegisterClick, onHomePageClick}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted', { email, password });
-    // Aquí iría la lógica de autenticación
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try{
+      console.log('Form submitted', { email, password });
+      if(email.length === 0 || password.length === 0)
+        throw new Error('Email and password are required');
+      const response = await fetch(`api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if(response.status === 200) {
+        //TODO: Save token (session of the user) in local storage
+        onHomePageClick();
+      }
+      else{
+        throw new Error(`${data.error}`);
+      }
+  } catch (error) {
+    console.error('An error occurred', error);
+    }
+    
   };
 
   return (
@@ -22,7 +43,7 @@ const Login = ({onRegisterClick, onHomePageClick}) => {
         </div>
         <Card.Title className="text-center mb-4">Bienvenido</Card.Title>
         <Card.Subtitle className="text-center text-muted mb-4">Ingresa tus detalles</Card.Subtitle>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={ handleSubmit }>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Control
               type="email"
@@ -47,7 +68,7 @@ const Login = ({onRegisterClick, onHomePageClick}) => {
             <a href="#" className="text-primary text-decoration-none">¿Olvidó su contraseña?</a>
           </div>
           
-          <Button variant="dark" type="submit" className="w-100" onClick={onHomePageClick}>
+          <Button variant="dark" type="submit" className="w-100">
             Continuar
           </Button>
         </Form>
