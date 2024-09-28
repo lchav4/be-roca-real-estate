@@ -1,7 +1,24 @@
 import React from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
+import { useLanguage } from '../app/LanguageContext';
 
 const Header = () => {
+  const { toggleLanguage, language } = useLanguage(); 
+
+
+  const texts = {
+    es: {
+      home: 'Inicio',
+      search: 'Buscar',
+      english: 'Inglés',
+    },
+    en: {
+      home: 'Home',
+      search: 'Search',
+      english: 'Spanish',
+    },
+  };
+
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
@@ -17,9 +34,9 @@ const Header = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#inicio">Inicio</Nav.Link>
-            <Nav.Link href="#buscar">Buscar</Nav.Link>
-            <Nav.Link href="#ingles">Inglés</Nav.Link>
+            <Nav.Link href="#inicio">{texts[language].home}</Nav.Link>
+            <Nav.Link href="#buscar">{texts[language].search}</Nav.Link>
+            <Nav.Link onClick={toggleLanguage}>{texts[language].english}</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

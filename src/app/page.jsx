@@ -1,9 +1,11 @@
 'use client'
-import Login from '../components/Login'
-import Register from '../components/Register'
-import Header from '../components/Header'
-import HomePage from '../components/HomePage'
-import { useState, useEffect } from 'react'
+import Login from '../components/Login';
+import Register from '../components/Register';
+import Header from '../components/Header';
+import HomePage from '../components/HomePage';
+import Footer from '../components/Footer';
+import { useState, useEffect } from 'react';
+import { LanguageProvider } from './LanguageContext';
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -14,10 +16,11 @@ export default function Home() {
   }, [])
 
   if (!isClient) {
-    return <div>Loading...</div>; // Placeholder while waiting for client-side rendering
+    return <div>Loading...</div>; 
   }
 
   return (
+    <LanguageProvider>
     <div>
       {currentPage === 'login' ? (
         <Login onRegisterClick={() => setCurrentPage('register')} onHomePageClick={() => setCurrentPage('home')} />
@@ -27,8 +30,10 @@ export default function Home() {
         <>
           <Header />
           <HomePage />
+          <Footer />
         </>
       )}
     </div>
+    </LanguageProvider>
   );
 };
