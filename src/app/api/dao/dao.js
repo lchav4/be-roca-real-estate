@@ -13,7 +13,7 @@ export const getUser = async (email, password) => {
             if (!isMatch) {
                 throw new Error('Contraseña incorrecta');
             }
-            return result;
+            return {email: result.email, name: result.name, role: result.role, favorites: result.favorites};
         } else {
             throw new Error('Usuario no encontrado');
         }

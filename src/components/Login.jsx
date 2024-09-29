@@ -3,11 +3,13 @@ import { Container, Form, Button, Card, InputGroup } from 'react-bootstrap';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
+import { useAuth } from './AuthProvider';
 
 const Login = ({ onRegisterClick, onHomePageClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -24,14 +26,15 @@ const Login = ({ onRegisterClick, onHomePageClick }) => {
       });
       const data = await response.json();
       if (response.status === 200) {
-        //TODO: Save token (session of the user) in local storage
+        const { token } = data;
+        login(token);
+        localStorage.setItem('token', token);
         onHomePageClick();
-
       } else {
         throw new Error(`${data.error}`);
       }
     } catch (error) {
-      toast.error('Usuario no encontrado');
+      toast.error(`${error.message}`);
       console.error('An error occurred', error);
     }
   };

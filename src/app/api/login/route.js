@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "../dao/dao";
+import jwt from 'jsonwebtoken';
 
 export const POST = async (req) => {
     try {
@@ -7,10 +8,14 @@ export const POST = async (req) => {
         const email = JSON.parse(body).email;
         const password = JSON.parse(body).password;
         const user = await getUser(email, password);
-        if (!user) {
-            return NextResponse.error(new Error("User not found"), 404);
-        }
-        return NextResponse.json({user}, {status: 200});
+
+        const token = jwt.sign(
+            {email: user.email, username: user.name, role: user.role},
+            process.env.JWT_SECRET,
+            {expiresIn: '1h'}
+        );
+
+        return NextResponse.json({user, token}, {status: 200});
     }
     catch (err) {
         return NextResponse.json({error: `${err}`}, {status: 500});
