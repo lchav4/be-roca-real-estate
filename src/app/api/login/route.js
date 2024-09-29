@@ -12,7 +12,7 @@ export const POST = async (req) => {
         const token = jwt.sign(
             {email: user.email, username: user.name, role: user.role, favorites: user.favorites},
             process.env.JWT_SECRET,
-            {expiresIn: '1h'}
+            {expiresIn: '2h'}
         );
 
         return NextResponse.json({token}, {status: 200});
