@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import Login from '../components/Login';
 import Register from '../components/Register';
 import Header from '../components/Header';
