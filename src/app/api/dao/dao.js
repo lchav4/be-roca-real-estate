@@ -1,20 +1,23 @@
 import { ObjectId } from "mongodb";
 import { connectDB, db } from "../../database/db";
+import bcrypt from 'bcryptjs';
 
-export const getUser = async (email) => {
-    try {
+const saltRounds = 10;
+
+export const getUser = async (email, password) => {
         await connectDB();
         const result = await db.collection('users').findOne({ email });
 
         if (result) {
+            const isMatch = await verifyPassword(password, result.password_hash);
+            if (!isMatch) {
+                throw new Error('Contraseña incorrecta');
+            }
             return result;
         } else {
-            return '';
+            throw new Error('Usuario no encontrado');
         }
-    } catch (err) {
-        console.error('Error al cargar datos desde la base de datos:', err);
-        return '';
-    }
+
 }
 
 export const createUser = async (email, name, password) => {
@@ -25,13 +28,27 @@ export const createUser = async (email, name, password) => {
         throw new Error('El usuario ya existe');
     }
 
+    const password_hash = await hashPassword(password);
+
+
     await db.collection('users').insertOne({
         email,
         name,
-        password_hash: password,
+        password_hash,
         role: 'CLIENT',
         favorites: []
     });
 
     return true;
+}
+
+async function hashPassword(password) {
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(password, salt);
+    return hash;
+}
+
+async function verifyPassword(password, hash) {
+    const isMatch = await bcrypt.compare(password, hash);
+    return isMatch;
 }

@@ -24,13 +24,9 @@ const Login = ({ onRegisterClick, onHomePageClick }) => {
       });
       const data = await response.json();
       if (response.status === 200) {
+        //TODO: Save token (session of the user) in local storage
+        onHomePageClick();
 
-        if (password === data.user.password_hash) {
-          //TODO: Save token (session of the user) in local storage
-          onHomePageClick();
-        } else {
-          toast.error('Contraseña incorrecta');
-        }
       } else {
         throw new Error(`${data.error}`);
       }
