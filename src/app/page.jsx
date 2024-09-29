@@ -49,7 +49,7 @@ export default function Home() {
   }
 
   return (
-    <AuthProvider> {/* Envuelve toda la aplicación con el AuthProvider */}
+    <AuthProvider>
       <LanguageProvider>
         <MainApp />
       </LanguageProvider>
