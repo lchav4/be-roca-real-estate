@@ -10,12 +10,12 @@ export const POST = async (req) => {
         const user = await getUser(email, password);
 
         const token = jwt.sign(
-            {email: user.email, username: user.name, role: user.role},
+            {email: user.email, username: user.name, role: user.role, favorites: user.favorites},
             process.env.JWT_SECRET,
             {expiresIn: '1h'}
         );
 
-        return NextResponse.json({user, token}, {status: 200});
+        return NextResponse.json({token}, {status: 200});
     }
     catch (err) {
         return NextResponse.json({error: `${err}`}, {status: 500});
