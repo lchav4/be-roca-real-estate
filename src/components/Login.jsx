@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import { useAuth } from './AuthProvider';
 
-const Login = ({ onRegisterClick, onHomePageClick }) => {
+const Login = ({ onRegisterClick, onHomePageClick, onForgotPasswordClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -81,7 +81,7 @@ const Login = ({ onRegisterClick, onHomePageClick }) => {
             </Form.Group>
 
             <div className="text-end mb-3">
-              <a href="#" className="text-primary text-decoration-none">¿Olvidó su contraseña?</a>
+              <Button variant="link" className="p-0" onClick={onForgotPasswordClick}>¿Olvidó su contraseña?</Button>
             </div>
 
             <Button variant="dark" type="submit" className="w-100">

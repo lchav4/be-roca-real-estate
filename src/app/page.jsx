@@ -5,9 +5,11 @@ import Register from '../components/Register';
 import Header from '../components/Header';
 import HomePage from '../components/HomePage';
 import Footer from '../components/Footer';
+import ForgotPassword from '../components/ForgotPassword'
 import { LanguageProvider } from './LanguageContext';
 import { AuthProvider, useAuth } from '../components/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
+
 
 const MainApp = () => {
   const { auth, logout } = useAuth();
@@ -37,9 +39,11 @@ const MainApp = () => {
   return (
     <div>
       {currentPage === 'login' ? (
-        <Login onRegisterClick={() => setCurrentPage('register')} onHomePageClick={() => setCurrentPage('home')} />
+        <Login onRegisterClick={() => setCurrentPage('register')} onHomePageClick={() => setCurrentPage('home')} onForgotPasswordClick={()=>setCurrentPage('forgotPassword')} />
       ) : currentPage === 'register' ? (
         <Register onBackToLogin={() => setCurrentPage('login')} />
+      ) : currentPage === 'forgotPassword' ? ( 
+        <ForgotPassword onBackToLogin={() => setCurrentPage('login')} />
       ) : (
         <>
           <Header />

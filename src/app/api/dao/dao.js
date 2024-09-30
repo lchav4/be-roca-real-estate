@@ -20,6 +20,17 @@ export const getUser = async (email, password) => {
 
 }
 
+export const findUser = async (email) => {
+    await connectDB();
+    const result = await db.collection('users').findOne({ email });
+
+    if (result) {
+        return true; 
+    } else {
+        return false; 
+    }
+};
+
 export const createUser = async (email, name, password) => {
     await connectDB();
     const collection = db.collection('users');
