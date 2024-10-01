@@ -19,17 +19,22 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-dark text-light mt-4" style={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}>
-      <Container>
-        <Row className="py-1"> 
-          <Col className="text-center">
-            <p className="mb-0">{texts[language].name}</p> 
-            <p className="mb-0">{texts[language].phone}</p> 
-            <p className="mb-0">{texts[language].email}</p> 
+<footer className="bg-dark text-light" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, borderTop: '1px solid #dee2e6' }}>
+      <Container fluid>
+        <Row className="py-2 align-items-center">
+          <Col xs={12} md={4} className="text-center text-md-start">
+            <small>{texts[language].name}</small>
+          </Col>
+          <Col xs={12} md={4} className="text-center">
+            <small>{texts[language].phone}</small>
+          </Col>
+          <Col xs={12} md={4} className="text-center text-md-end">
+            <small>{texts[language].email}</small>
           </Col>
         </Row>
       </Container>
     </footer>
+
   );
 };
 

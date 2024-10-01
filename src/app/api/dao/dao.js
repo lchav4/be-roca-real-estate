@@ -53,6 +53,13 @@ export const createUser = async (email, name, password) => {
     return true;
 }
 
+export const updatePassword = async (email, password) => {
+    await connectDB();
+    const password_hash = await hashPassword(password);
+    await db.collection('users').updateOne({ email }, { $set: { password_hash } });
+    return true;
+}
+
 async function hashPassword(password) {
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(password, salt);

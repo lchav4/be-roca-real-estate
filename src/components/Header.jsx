@@ -5,20 +5,20 @@ import { useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from './AuthProvider';
 
-const Header = () => {
+const Header = ({ onNavigate }) => {
   const { toggleLanguage, language } = useLanguage(); 
   const [userInfo, setUserInfo] = useState(null);
-  const { logout } = useAuth();
+  const { auth, logout } = useAuth();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decodedToken = jwtDecode(token);
+    if (auth) {
+      const decodedToken = jwtDecode(auth);
       setUserInfo(decodedToken);
     }
-  }, []);
-
-
+    else {
+      setUserInfo(null);
+    }
+  }, [auth]);
 
   const texts = {
     es: {
@@ -37,31 +37,34 @@ const Header = () => {
 
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
-      <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand onClick={() => onNavigate('home')}>
           <img
             src={'/roca-real-logo.png'}
             width="30"
             height="30"
-            className="d-inline-block align-top"
+            className="d-inline-block align-top ms-4"
             alt="Logo"
           />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#inicio">{texts[language].home}</Nav.Link>
-            <Nav.Link href="#buscar">{texts[language].search}</Nav.Link>
+            { userInfo && (
+            <>
+            <Nav.Link onClick={() => onNavigate('home')}>{texts[language].home}</Nav.Link>
+            <Nav.Link onClick={() => onNavigate('search')}>{texts[language].search}</Nav.Link>
+            </>
+            )
+            }
             <Nav.Link onClick={toggleLanguage}>{texts[language].english}</Nav.Link>
-            {userInfo ? (
-              <Nav.Link href="#profile">{userInfo.username}</Nav.Link>
-            ) : (
-              <Nav.Link href="#login">NA</Nav.Link>
+          </Nav>
+          <Nav className="ms-auto">
+            {userInfo && (
+              <Nav.Link onClick={() => onNavigate('profile')}>{userInfo.username}</Nav.Link>
             )}
             <Nav.Link onClick={logout}>{texts[language].logout}</Nav.Link>
           </Nav>
         </Navbar.Collapse>
-      </Container>
     </Navbar>
   );
 };

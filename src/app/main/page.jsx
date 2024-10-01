@@ -1,14 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Login from '../components/Login';
-import Register from '../components/Register';
-import Header from '../components/Header';
-import HomePage from '../components/HomePage';
-import Footer from '../components/Footer';
-import ForgotPassword from '../components/ForgotPassword'
-import { LanguageProvider } from './LanguageContext';
-import { AuthProvider, useAuth } from '../components/AuthProvider';
+import Login from '../../components/Login';
+import Register from '../../components/Register';
+import Header from '../../components/Header';
+import HomePage from '../../components/HomePage';
+import Footer from '../../components/Footer';
+import ForgotPassword from '../../components/ForgotPassword'
+import { LanguageProvider } from '../LanguageContext';
+import { AuthProvider, useAuth } from '../../components/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
+import Search from '../../components/Search';
 
 
 const MainApp = () => {
@@ -34,19 +35,32 @@ const MainApp = () => {
     }
   }, [auth, logout]);
 
+  const handleNavigation = (page) => {
+    setCurrentPage(page);
+  };
 
 
   return (
     <div>
       {currentPage === 'login' ? (
+        <>
+        <Header />
         <Login onRegisterClick={() => setCurrentPage('register')} onHomePageClick={() => setCurrentPage('home')} onForgotPasswordClick={()=>setCurrentPage('forgotPassword')} />
+        <Footer />
+        </>
       ) : currentPage === 'register' ? (
         <Register onBackToLogin={() => setCurrentPage('login')} />
       ) : currentPage === 'forgotPassword' ? ( 
         <ForgotPassword onBackToLogin={() => setCurrentPage('login')} />
+      ) : currentPage === 'search' ? ( 
+        <>
+        <Header onNavigate={handleNavigation} />
+        <Search />
+        <Footer />
+        </>
       ) : (
         <>
-          <Header />
+          <Header onNavigate={handleNavigation} />
           <HomePage />
           <Footer />
         </>
