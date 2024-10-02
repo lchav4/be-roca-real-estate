@@ -1,0 +1,79 @@
+.profile {
+  border: 1px solid #373729; 
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: 40px auto;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.profile h1 {
+  font-size: 2.5em;
+  margin-bottom: 15px;
+  color: #373729; 
+  text-align: left;
+  font-family: 'Georgia', serif;
+  position: relative;
+}
+
+.profile h1::after {
+  content: '';
+  display: block;
+  width: 50%;
+  height: 4px;
+  background-color: #373729; 
+  margin-top: 5px;
+  border-radius: 2px;
+}
+
+.profile p {
+  font-size: 1.2em;
+  margin: 8px 0;
+  color: #555;
+  text-align: left;
+}
+
+.profile p span {
+  font-weight: bold;
+  color: #373729; 
+  transition: color 0.3s ease;
+}
+
+.profile p span:hover {
+  color: #5a5a5a; 
+}
+
+.loading {
+  animation: pulse 1.5s infinite;
+  text-align: center;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 600px) {
+  .profile {
+    padding: 20px;
+    max-width: 90%;
+  }
+
+  .profile h1 {
+    font-size: 2em;
+  }
+}
