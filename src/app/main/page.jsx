@@ -1,24 +1,27 @@
-'use client';
+"use client";
 import { useState, useEffect } from 'react';
 import Login from '../../components/Login';
 import Register from '../../components/Register';
 import Header from '../../components/Header';
 import HomePage from '../../components/HomePage';
 import Footer from '../../components/Footer';
-import ForgotPassword from '../../components/ForgotPassword'
+import ForgotPassword from '../../components/ForgotPassword';
+import Profile from '../../components/Profile'; // Importa el componente Profile
 import { LanguageProvider } from '../LanguageContext';
 import { AuthProvider, useAuth } from '../../components/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
 import Search from '../../components/Search';
 
-
 const MainApp = () => {
   const { auth, logout } = useAuth();
   const [currentPage, setCurrentPage] = useState('login');
+  const [userInfo, setUserInfo] = useState(null); // Estado para la información del usuario
 
   useEffect(() => {
     if (auth) {
       setCurrentPage('home');
+      const decodedToken = jwtDecode(auth); // Decodifica el token JWT
+      setUserInfo(decodedToken); // Almacena la información del usuario
     } else {
       setCurrentPage('login');
     }
@@ -39,24 +42,33 @@ const MainApp = () => {
     setCurrentPage(page);
   };
 
-
   return (
     <div>
       {currentPage === 'login' ? (
         <>
-        <Header />
-        <Login onRegisterClick={() => setCurrentPage('register')} onHomePageClick={() => setCurrentPage('home')} onForgotPasswordClick={()=>setCurrentPage('forgotPassword')} />
-        <Footer />
+          <Header />
+          <Login
+            onRegisterClick={() => setCurrentPage('register')}
+            onHomePageClick={() => setCurrentPage('home')}
+            onForgotPasswordClick={() => setCurrentPage('forgotPassword')}
+          />
+          <Footer />
         </>
       ) : currentPage === 'register' ? (
         <Register onBackToLogin={() => setCurrentPage('login')} />
-      ) : currentPage === 'forgotPassword' ? ( 
+      ) : currentPage === 'forgotPassword' ? (
         <ForgotPassword onBackToLogin={() => setCurrentPage('login')} />
-      ) : currentPage === 'search' ? ( 
+      ) : currentPage === 'search' ? (
         <>
-        <Header onNavigate={handleNavigation} />
-        <Search />
-        <Footer />
+          <Header onNavigate={handleNavigation} />
+          <Search />
+          <Footer />
+        </>
+      ) : currentPage === 'profile' ? ( // Renderiza el perfil si currentPage es 'profile'
+        <>
+          <Header onNavigate={handleNavigation} />
+          <Profile user={userInfo} /> {/* Pasa la información del usuario */}
+          <Footer />
         </>
       ) : (
         <>
@@ -77,7 +89,7 @@ export default function Home() {
   }, []);
 
   if (!isClient) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -87,4 +99,4 @@ export default function Home() {
       </LanguageProvider>
     </AuthProvider>
   );
-};
+}
