@@ -57,7 +57,7 @@ const Header = ({ onNavigate }) => {
         </Nav>
         <Nav className="ms-auto">
           {userInfo && (
-            <Nav.Link onClick={() => onNavigate('profile')}>{userInfo.username}</Nav.Link> // Redirige al perfil
+            <Nav.Link onClick={() => onNavigate('profile')}>{userInfo.username}</Nav.Link> 
           )}
           <Nav.Link onClick={logout}>{texts[language].logout}</Nav.Link>
         </Nav>

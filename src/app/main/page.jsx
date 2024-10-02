@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import HomePage from '../../components/HomePage';
 import Footer from '../../components/Footer';
 import ForgotPassword from '../../components/ForgotPassword';
-import Profile from '../../components/Profile'; // Importa el componente Profile
+import Profile from '../../components/Profile'; 
 import { LanguageProvider } from '../LanguageContext';
 import { AuthProvider, useAuth } from '../../components/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
@@ -15,13 +15,13 @@ import Search from '../../components/Search';
 const MainApp = () => {
   const { auth, logout } = useAuth();
   const [currentPage, setCurrentPage] = useState('login');
-  const [userInfo, setUserInfo] = useState(null); // Estado para la información del usuario
+  const [userInfo, setUserInfo] = useState(null); 
 
   useEffect(() => {
     if (auth) {
       setCurrentPage('home');
-      const decodedToken = jwtDecode(auth); // Decodifica el token JWT
-      setUserInfo(decodedToken); // Almacena la información del usuario
+      const decodedToken = jwtDecode(auth); 
+      setUserInfo(decodedToken); 
     } else {
       setCurrentPage('login');
     }
@@ -64,10 +64,10 @@ const MainApp = () => {
           <Search />
           <Footer />
         </>
-      ) : currentPage === 'profile' ? ( // Renderiza el perfil si currentPage es 'profile'
+      ) : currentPage === 'profile' ? ( 
         <>
           <Header onNavigate={handleNavigation} />
-          <Profile user={userInfo} /> {/* Pasa la información del usuario */}
+          <Profile user={userInfo} /> 
           <Footer />
         </>
       ) : (
