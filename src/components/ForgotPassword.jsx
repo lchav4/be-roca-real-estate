@@ -2,30 +2,48 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Card } from 'react-bootstrap';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLanguage } from '../app/LanguageContext';
 
 const ForgotPassword = ({ onBackToLogin }) => {
   const [email, setEmail] = useState('');
+  const { language } = useLanguage();
+
+  const texts = {
+    es: {
+      title: 'Restablecer contraseña',
+      email: 'Ingresa el correo electrónico que usaste para registrarte',
+      sendLink: 'Enviar enlace de restablecimiento',
+      toLogin: 'Regresar a iniciar sesión'
+    },
+    en: {
+      title: 'Reset password',
+      email: 'Enter the email address you used to sign up',
+      sendLink: 'Send reset link',
+      toLogin: 'Go back to log in'
+    },
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      if (email.length === 0)
-        throw new Error('Email is required');
-      const response = await fetch(`api/forgotPassword`, {
+      if (email.length === 0) throw new Error('Email is required');
+
+      const response = await fetch('/api/forgotPassword', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email }),
       });
+
       const data = await response.json();
       if (response.status === 200) {
         toast.success('An email has been sent to reset your password');
       } else {
-        throw new Error(`${data.error}`);
+        throw new Error(data.error); 
       }
     } catch (error) {
-      toast.error(`${error.message}`);
+      toast.error(error.message); 
     }
   };
 
@@ -39,9 +57,9 @@ const ForgotPassword = ({ onBackToLogin }) => {
               <img src="/roca-real-logo.png" alt="Logo" style={{ width: '100px', height: '100px' }} />
             </div>
           </div>
-          <Card.Title className="text-center mb-4">Restablecer Contraseña</Card.Title>
+          <Card.Title className="text-center mb-4">{texts[language].title}</Card.Title>
           <Card.Subtitle className="text-center text-muted mb-4">
-            Ingresa el correo electrónico que usaste para registrarte
+            {texts[language].email}
           </Card.Subtitle>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -54,11 +72,11 @@ const ForgotPassword = ({ onBackToLogin }) => {
               />
             </Form.Group>
             <Button variant="dark" type="submit" className="w-100">
-              Enviar enlace de restablecimiento
+              {texts[language].sendLink}
             </Button>
           </Form>
           <div className="text-center mt-3">
-            <Button variant="link" onClick={onBackToLogin}>Regresar a Iniciar Sesión</Button>
+            <Button variant="link" onClick={onBackToLogin}>{texts[language].toLogin}</Button>
           </div>
         </Card>
       </Container>

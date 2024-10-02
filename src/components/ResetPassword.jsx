@@ -4,7 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { on } from "events";
+import { useLanguage } from "../app/LanguageContext";
 
 const ResetPassword = ({ onBacktoLogin }) => {
   const [newPassword, setNewPassword] = useState("");
@@ -13,6 +13,24 @@ const ResetPassword = ({ onBacktoLogin }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [token, setToken] = useState("");
   const router = useRouter();
+  const { language } = useLanguage();
+
+  const texts = {
+    es: {
+      title: 'Restablecer contraseña',
+      password: 'Ingresa tu nueva contraseña',
+      newPassword: 'Nueva contraseña',
+      confirmPassword: 'Confirmar nueva contraseña',
+      reset: 'Restablecer contraseña'
+    },
+    en: {
+      title: 'Reset password',
+      password: 'Enter your new password',
+      newPassword: 'New password',
+      confirmPassword: 'Confirm new password', 
+      reset: 'Reset password'
+    },
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -36,13 +54,14 @@ const ResetPassword = ({ onBacktoLogin }) => {
           toast.success("Contraseña actualizada correctamente");
           router.push("/main");
         } else {
-          throw new Error(response.error);
+          const data = await response.json();
+          throw new Error(data.error || 'Error desconocido'); 
         }
       } else {
         toast.error("Las contraseñas no coinciden");
       }
     } catch (error) {
-      toast.error(`Error: ${error}`);
+      toast.error(`Error: ${error.message || 'Error al restablecer la contraseña'}`); 
     }
   };
 
@@ -62,13 +81,13 @@ const ResetPassword = ({ onBacktoLogin }) => {
                 style={{ width: "100px", height: "100px" }}
               />
             </div>
-            <h2 className="text-center mb-2">Restablecer Contraseña</h2>
+            <h2 className="text-center mb-2">{texts[language].title}</h2>
             <p className="text-center text-muted mb-4">
-              Ingresa tu nueva contraseña
+              {texts[language].password}
             </p>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="formNewPassword">
-                <Form.Label>Nueva Contraseña</Form.Label>
+                <Form.Label>{texts[language].newPassword}</Form.Label> 
                 <InputGroup>
                   <Form.Control
                     type={showPassword ? "text" : "password"}
@@ -85,7 +104,7 @@ const ResetPassword = ({ onBacktoLogin }) => {
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-4" controlId="formConfirmPassword">
-                <Form.Label>Confirmar Contraseña</Form.Label>
+                <Form.Label>{texts[language].confirmPassword}</Form.Label> 
                 <InputGroup>
                   <Form.Control
                     type={showConfirmPassword ? "text" : "password"}
@@ -102,7 +121,7 @@ const ResetPassword = ({ onBacktoLogin }) => {
                 </InputGroup>
               </Form.Group>
               <Button variant="dark" type="submit" className="w-100">
-                Restablecer Contraseña
+                {texts[language].reset}
               </Button>
             </Form>
           </Card.Body>

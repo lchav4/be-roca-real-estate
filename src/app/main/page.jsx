@@ -49,9 +49,17 @@ const MainApp = () => {
         <Footer />
         </>
       ) : currentPage === 'register' ? (
+        <>
+        <Header />
         <Register onBackToLogin={() => setCurrentPage('login')} />
+        <Footer />
+        </>
       ) : currentPage === 'forgotPassword' ? ( 
+        <>
+        <Header />
         <ForgotPassword onBackToLogin={() => setCurrentPage('login')} />
+        <Footer />
+        </>
       ) : currentPage === 'search' ? ( 
         <>
         <Header onNavigate={handleNavigation} />

@@ -3,6 +3,7 @@ import { Container, Form, Button, Card, InputGroup } from 'react-bootstrap';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useLanguage } from '../app/LanguageContext';
 
 const Register = ({ onBackToLogin }) => {
   const [email, setEmail] = useState('');
@@ -11,32 +12,60 @@ const Register = ({ onBackToLogin }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { language } = useLanguage();
+
+  const texts = {
+    es: {
+      title: 'Crear una cuenta',
+      details: 'Ingresa tus detalles',
+      name: 'Nombre',
+      email: 'Email',
+      password: 'Contraseña',
+      confirmPassword: 'Confirmar contraseña',
+      toLogin: 'Volver al inicio de sesión',
+      continue: 'Continuar'
+    },
+    en: {
+      title: 'Create an account',
+      details: 'Enter your credentials',
+      name: 'Name',
+      email: 'Email',
+      password: 'Password',
+      confirmPassword: 'Confirm password',
+      toLogin: 'Go back to log in',
+      continue: 'Continue'
+    },
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      if (email.length === 0 || name.length === 0 || password.length === 0 || confirmPassword.length === 0)
+      if (email.length === 0 || name.length === 0 || password.length === 0 || confirmPassword.length === 0) {
         return toast.info('Todos los campos son requeridos');
-      if (password !== confirmPassword)
+      }
+      if (password !== confirmPassword) {
         return toast.error('Las contraseñas no coinciden');
-      const response = await fetch(`api/register`, {
+      }
+
+      const response = await fetch('/api/register', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, name, password }),
       });
+
       const data = await response.json();
-      toast.success('Usuario creado correctamente');
       if (response.status === 200) {
+        toast.success('Usuario creado correctamente');
         setTimeout(() => {
           onBackToLogin();
         }, 2000);
       } else {
-        throw new Error(`${data.error}`);
+        throw new Error(data.error); 
       }
     } catch (error) {
-      toast.error('Error al crear usuario');
+      toast.error(error.message || 'Error al crear usuario'); 
     }
   };
 
@@ -49,11 +78,11 @@ const Register = ({ onBackToLogin }) => {
             <div className="text-center mb-4">
               <img src="/roca-real-logo.png" alt="Logo" style={{ width: '100px', height: '100px' }} />
             </div>
-            <h2 className="text-center mb-2">Crear una cuenta</h2>
-            <p className="text-center text-muted mb-4">Ingresa tus detalles</p>
+            <h2 className="text-center mb-2">{texts[language].title}</h2>
+            <p className="text-center text-muted mb-4">{texts[language].details}</p>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3" controlId="formEmail">
-                <Form.Label>Email</Form.Label>
+                <Form.Label>{texts[language].email}</Form.Label>
                 <Form.Control
                   type="email"
                   value={email}
@@ -62,7 +91,7 @@ const Register = ({ onBackToLogin }) => {
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formName">
-                <Form.Label>Nombre</Form.Label>
+                <Form.Label>{texts[language].name}</Form.Label>
                 <Form.Control
                   type="text"
                   value={name}
@@ -71,7 +100,7 @@ const Register = ({ onBackToLogin }) => {
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="formPassword">
-                <Form.Label>Contraseña</Form.Label>
+                <Form.Label>{texts[language].password}</Form.Label>
                 <InputGroup>
                   <Form.Control
                     type={showPassword ? "text" : "password"}
@@ -88,7 +117,7 @@ const Register = ({ onBackToLogin }) => {
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-4" controlId="formConfirmPassword">
-                <Form.Label>Confirmar contraseña</Form.Label>
+                <Form.Label>{texts[language].confirmPassword}</Form.Label>
                 <InputGroup>
                   <Form.Control
                     type={showConfirmPassword ? "text" : "password"}
@@ -105,10 +134,10 @@ const Register = ({ onBackToLogin }) => {
                 </InputGroup>
               </Form.Group>
               <Button variant="dark" type="submit" className="w-100">
-                Continuar
+                {texts[language].continue}
               </Button>
               <div className="text-center mt-3">
-                <Button variant="link" onClick={onBackToLogin}>Volver al inicio de sesión</Button>
+                <Button variant="link" onClick={onBackToLogin}>{texts[language].toLogin}</Button>
               </div>
             </Form>
           </Card.Body>

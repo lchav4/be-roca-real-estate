@@ -1,16 +1,11 @@
 import nodemailer from 'nodemailer';
 
 const sendEmail = async (to, resetLink) => {
-    console.log(process.env.EMAIL_USER);
-    console.log(process.env.EMAIL_PASS);
-
     const transporter = nodemailer.createTransport({
-        host: 'smtp.office365.com', 
-        port: 587, 
-        secure: false, 
+        service: 'gmail',
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
+            user: process.env.EMAIL_USER, 
+            pass: process.env.EMAIL_PASS, 
         },
     });
 
