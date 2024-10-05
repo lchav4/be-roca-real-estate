@@ -48,11 +48,13 @@ const Login = ({ onRegisterClick, onHomePageClick, onForgotPasswordClick }) => {
       });
 
       const data = await response.json();
+
+
       if (response.status === 200) {
-        const { token } = data;
+        const { token, role } = data;
         login(token);
         localStorage.setItem('token', token);
-        onHomePageClick();
+        onHomePageClick(role);
       } else {
         throw new Error(data.error); 
       }

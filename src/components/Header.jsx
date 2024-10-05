@@ -22,12 +22,16 @@ const Header = ({ onNavigate }) => {
     es: {
       home: 'Inicio',
       search: 'Buscar',
+      admin: 'Admin',
+      profile: 'Perfil',
       english: 'Inglés',
       logout: 'Cerrar sesión',
     },
     en: {
       home: 'Home',
       search: 'Search',
+      admin: 'Admin',
+      profile: 'Profile',
       english: 'Spanish',
       logout: 'Logout',
     },
@@ -51,19 +55,26 @@ const Header = ({ onNavigate }) => {
             <>
               <Nav.Link onClick={() => onNavigate('home')}>{texts[language].home}</Nav.Link>
               <Nav.Link onClick={() => onNavigate('search')}>{texts[language].search}</Nav.Link>
+              
+              {/* Show Admin link if the user is an admin */}
+              {userInfo.role === 'ADMIN' && (
+                <Nav.Link onClick={() => onNavigate('admin')}>{texts[language].admin}</Nav.Link>
+              )}
             </>
           )}
           <Nav.Link onClick={toggleLanguage}>{texts[language].english}</Nav.Link>
         </Nav>
         <Nav className="ms-auto">
           {userInfo && (
-            <Nav.Link onClick={() => onNavigate('profile')}>{userInfo.username}</Nav.Link> 
+            <>
+              {/* Show Profile for any logged-in user */}
+              <Nav.Link onClick={() => onNavigate('profile')}>{texts[language].profile}: {userInfo.username}</Nav.Link> 
+              <Nav.Link onClick={logout}>{texts[language].logout}</Nav.Link>
+            </>
           )}
-          <Nav.Link onClick={logout}>{texts[language].logout}</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
   );
 };
-
 export default Header;

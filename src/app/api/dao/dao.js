@@ -20,6 +20,36 @@ export const getUser = async (email, password) => {
 
 }
 
+export const saveProperty = async (propertyData) => {
+    await connectDB();
+    const collection = db.collection('properties');
+
+    // Check if required fields are present
+    if (!propertyData.title || !propertyData.location || !propertyData.propertyType) {
+        throw new Error('Faltan campos obligatorios');
+    }
+
+    // Prepare the property object to be inserted
+    const newProperty = {
+        province: propertyData.province,
+        region: propertyData.region,
+        location: propertyData.location,
+        propertyType: propertyData.propertyType,
+        landSize: propertyData.landSize,
+        title: propertyData.title,
+        description: propertyData.description,
+        salePrice: propertyData.salePrice,
+        rentPrice: propertyData.rentPrice,
+        forSale: propertyData.forSale,
+        forRent: propertyData.forRent,
+        createdAt: new Date()  // Optionally add created date
+    };
+
+    // Insert the new property into the database
+    await collection.insertOne(newProperty);
+    return true;  // Indicate that the property was successfully saved
+};
+
 export const findUser = async (email) => {
     await connectDB();
     const result = await db.collection('users').findOne({ email });

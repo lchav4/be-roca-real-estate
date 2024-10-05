@@ -7,6 +7,7 @@ import HomePage from '../../components/HomePage';
 import Footer from '../../components/Footer';
 import ForgotPassword from '../../components/ForgotPassword';
 import Profile from '../../components/Profile'; 
+import AdminPage from '../../components/AdminPage';
 import { LanguageProvider } from '../LanguageContext';
 import { AuthProvider, useAuth } from '../../components/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
@@ -19,9 +20,14 @@ const MainApp = () => {
 
   useEffect(() => {
     if (auth) {
-      setCurrentPage('home');
       const decodedToken = jwtDecode(auth); 
       setUserInfo(decodedToken); 
+  
+      if (decodedToken.role === 'ADMIN') {
+        setCurrentPage('admin');
+      } else if (decodedToken.role === 'CLIENT') {
+        setCurrentPage('home');
+      }
     } else {
       setCurrentPage('login');
     }
@@ -49,42 +55,56 @@ const MainApp = () => {
           <Header />
           <Login
             onRegisterClick={() => setCurrentPage('register')}
-            onHomePageClick={() => setCurrentPage('home')}
+            onHomePageClick={(role) => {
+
+              if(role === 'ADMIN') {
+                handleNavigation('admin');
+              } else if (role === 'CLIENT') {
+                setCurrentPage('home');
+              }
+
+            }}
             onForgotPasswordClick={() => setCurrentPage('forgotPassword')}
           />
           <Footer />
         </>
       ) : currentPage === 'register' ? (
         <>
-        <Header />
-        <Register onBackToLogin={() => setCurrentPage('login')} />
-        <Footer />
+          <Header />
+          <Register onBackToLogin={() => setCurrentPage('login')} />
+          <Footer />
         </>
-      ) : currentPage === 'forgotPassword' ? ( 
+      ) : currentPage === 'forgotPassword' ? (
         <>
-        <Header />
-        <ForgotPassword onBackToLogin={() => setCurrentPage('login')} />
-        <Footer />
+          <Header />
+          <ForgotPassword onBackToLogin={() => setCurrentPage('login')} />
+          <Footer />
         </>
-      ) : currentPage === 'search' ? ( 
+      ) : currentPage === 'search' ? (
         <>
           <Header onNavigate={handleNavigation} />
           <Search />
           <Footer />
         </>
-      ) : currentPage === 'profile' ? ( 
+      ) : currentPage === 'profile' ? (
         <>
           <Header onNavigate={handleNavigation} />
-          <Profile user={userInfo} /> 
+          <Profile user={userInfo} />
           <Footer />
         </>
-      ) : (
+      ) : currentPage === 'home' ? (
         <>
           <Header onNavigate={handleNavigation} />
           <HomePage />
           <Footer />
         </>
-      )}
+      ) : currentPage === 'admin' ? (  
+        <>
+          <Header onNavigate={handleNavigation} />
+          <AdminPage />  
+          <Footer />
+        </>
+      ) : null}
     </div>
   );
 };

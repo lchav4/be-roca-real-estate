@@ -15,7 +15,7 @@ export const POST = async (req) => {
             {expiresIn: '2h'}
         );
 
-        return NextResponse.json({token}, {status: 200});
+        return NextResponse.json({ token, role: user.role }, {status: 200});
     }
     catch (err) {
         return NextResponse.json({error: `${err}`}, {status: 500});
