@@ -3,8 +3,8 @@ import { Container, Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
 
 const NewPropertyForm = () => {
-  const [images, setImages] = useState([]); // Nueva variable de estado para la imagen
-  const [imagePreviews, setImagePreviews] = useState([]); // Nueva variable de estado para la vista previa de la imagen
+  const [images, setImages] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [formData, setFormData] = useState({
     province: "",
     region: "",
@@ -22,10 +22,10 @@ const NewPropertyForm = () => {
   const handleImageChange = async (e) => {
     e.preventDefault();
     const files = Array.from(e.target.files);
-    setImages((prevImages) => [...prevImages, ...files]); // Guardar la imagen seleccionada
+    setImages((prevImages) => [...prevImages, ...files]);
 
-    const filePreviews = files.map((file) => URL.createObjectURL(file)); // Crear vista previa de la imagen
-    setImagePreviews((prevPreviews) => [...prevPreviews, ...filePreviews]); // Guardar la vista previa de la imagen
+    const filePreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews((prevPreviews) => [...prevPreviews, ...filePreviews]);
   };
 
   const handleChange = (e) => {
@@ -40,19 +40,14 @@ const NewPropertyForm = () => {
     e.preventDefault();
 
     try {
-      const formDataObj = new FormData(); // Usamos FormData para enviar archivos
+      const formDataObj = new FormData();
       Object.keys(formData).forEach((key) => {
         formDataObj.append(key, formData[key]);
       });
 
       images.forEach((image, index) => {
-        formDataObj.append(`image[${index}]`, image); // Agregar cada imagen al FormData
+        formDataObj.append(`image[${index}]`, image);
       });
-
-          // Verificar el contenido de formDataObj
-    for (let pair of formDataObj.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-      }
 
       const response = await fetch("/api/properties", {
         method: "POST",
@@ -79,7 +74,8 @@ const NewPropertyForm = () => {
         forSale: false,
         forRent: false,
       });
-      setImages([]); // Restablecer imagen
+      setImages([]);
+      setImagePreviews([]);
     } catch (error) {
       toast.error(error.message);
     }
