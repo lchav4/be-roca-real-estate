@@ -8,7 +8,7 @@ export const POST = async (req) => {
 
         await saveProperty(propertyData);
 
-        return NextResponse.json({ message: 'Propiedad guardada con éxito' }, { status: 201 }); 
+        return NextResponse.json({ message: 'Propiedad guardada con éxito' }, { status: 200 }); 
     } catch (err) {
         return NextResponse.json({ error: `${err}` }, { status: 500 });
     }

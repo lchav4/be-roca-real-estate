@@ -6,7 +6,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from './AuthProvider';
 import { useLanguage } from '../app/LanguageContext';
 
-const Login = ({ onRegisterClick, onHomePageClick, onForgotPasswordClick }) => {
+const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -51,10 +51,9 @@ const Login = ({ onRegisterClick, onHomePageClick, onForgotPasswordClick }) => {
 
 
       if (response.status === 200) {
-        const { token, role } = data;
+        const { token } = data;
         login(token);
         localStorage.setItem('token', token);
-        onHomePageClick(role);
       } else {
         throw new Error(data.error); 
       }

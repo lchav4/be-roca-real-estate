@@ -55,15 +55,6 @@ const MainApp = () => {
           <Header />
           <Login
             onRegisterClick={() => setCurrentPage('register')}
-            onHomePageClick={(role) => {
-
-              if(role === 'ADMIN') {
-                handleNavigation('admin');
-              } else if (role === 'CLIENT') {
-                setCurrentPage('home');
-              }
-
-            }}
             onForgotPasswordClick={() => setCurrentPage('forgotPassword')}
           />
           <Footer />

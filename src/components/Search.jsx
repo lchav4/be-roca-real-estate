@@ -37,9 +37,42 @@ const PropertySearch = () => {
     },
   };
 
+  const propiedades = ["Todos",
+                        "Apartamentos",
+                        "Bodegas",
+                        "Cabinas - Cabañas",
+                        "Casas",
+                        "Casas de hospedaje",
+                        "Centros Turísticos",
+                        "Consultorio Médico",
+                        "Desarrollos y Proyectos",
+                        "Edificios",
+                        "Estación de Servicio",
+                        "Fincas",
+                        "Hoteles",
+                        "Locales Comerciales",
+                        "Negocios funcionando",
+                        "Oficinas",
+                        "Quintas",
+                        "Restaurantes",
+                        "Terrenos | Lotes"
+  ]
+
+  const regiones  = [
+    "Todos",
+    "Guanacaste | Pacífico Norte",
+    "Limón | Caribe",
+    "Pérez Zeledón",
+    "Puntarenas | Pacífico sur",
+    "Valle Central",
+    "Zona Norte",
+    "Zona Pacífico Sur"
+];
+
+
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log('Searching with selected criteria');
+
   };
 
   return (
@@ -50,8 +83,11 @@ const PropertySearch = () => {
           <Form.Label column sm={6}>{texts[language].propertyType}</Form.Label>
           <Col sm={6}>
             <Form.Select value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
-              <option>Todos</option>
-              {/* Agregar más opciones según sea necesario */}
+               {
+               propiedades.map((propiedad) =>
+                (<option>{propiedad}</option>)
+              )
+            }
             </Form.Select>
           </Col>
         </Form.Group>
@@ -60,8 +96,11 @@ const PropertySearch = () => {
           <Form.Label column sm={6}>{texts[language].region}</Form.Label>
           <Col sm={6}>
             <Form.Select value={region} onChange={(e) => setRegion(e.target.value)}>
-              <option>Todos</option>
-              {/* Agregar más opciones de regiones */}
+            {
+               regiones.map((region) => 
+                (<option>{region}</option>)
+              )
+            }
             </Form.Select>
           </Col>
         </Form.Group>
