@@ -49,12 +49,14 @@ const NewPropertyForm = () => {
         formDataObj.append(`image[${index}]`, image); // Agregar cada imagen al FormData
       });
 
+          // Verificar el contenido de formDataObj
+    for (let pair of formDataObj.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
+
       const response = await fetch("/api/properties", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: formDataObj,
+        body: formDataObj
       });
 
       const data = await response.json();
@@ -251,7 +253,6 @@ const NewPropertyForm = () => {
                 multiple
                 onChange={(e) => {
                   handleImageChange(e);
-                  console.log(images);
                 }}
               />
               <div className="image-previews">
