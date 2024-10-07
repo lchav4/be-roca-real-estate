@@ -1,25 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
-import "./Profile.css";
+import AliceCarousel from 'react-alice-carousel';
+import 'react-alice-carousel/lib/alice-carousel.css';
+import './Profile.css';
 
 const PropertyInformation = ({ property }) => {
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactMessage, setContactMessage] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0); 
+  const [thumbnailStart, setThumbnailStart] = useState(0); // Índice de la primera miniatura visible
+  const carouselRef = useRef(null);
+
+  const thumbnailLimit = 5; // Límite de miniaturas a mostrar
 
   if (!property) {
     return <p>No hay información de la propiedad disponible.</p>;
   }
-
-  const imageUrl = `/uploads/${property.title}_0.jpg`;
-  const phoneNumber = '50684613257'; 
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const message = `Hola, me interesa la propiedad: ${property.title}.\nMi nombre es ${contactName}.\nPuedes contactarme al email: ${contactEmail}.\n Comentarios: ${contactMessage}`;
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/50684613257?text=${encodedMessage}`;
 
     window.open(whatsappUrl, '_blank');
 
@@ -27,6 +31,56 @@ const PropertyInformation = ({ property }) => {
     setContactEmail('');
     setContactMessage('');
   };
+
+  const handleDragStart = (e) => e.preventDefault();
+
+  const items = property.imagesURL.map((imageURL, index) => (
+    <img
+      src={imageURL}
+      style={{ height: '600px', objectFit: 'cover', width: '100%' }}
+      alt={`Imagen ${index + 1}`}
+      onDragStart={handleDragStart}
+    />
+  ));
+
+  const handleThumbnailClick = (index) => {
+    setActiveIndex(index);
+    if (carouselRef.current) {
+      carouselRef.current.slideTo(index); 
+    }
+  };
+
+  // Mostrar solo las miniaturas dentro del límite
+  const visibleThumbnails = items.slice(thumbnailStart, thumbnailStart + thumbnailLimit);
+
+  const handleNextThumbnails = () => {
+    if (thumbnailStart + thumbnailLimit < items.length) {
+      setThumbnailStart(thumbnailStart + 1); // Avanza un índice
+    }
+  };
+
+  const handlePrevThumbnails = () => {
+    if (thumbnailStart > 0) {
+      setThumbnailStart(thumbnailStart - 1); // Retrocede un índice
+    }
+  };
+
+  const thumbnails = visibleThumbnails.map((item, index) => (
+    <img
+      key={index + thumbnailStart}
+      src={item.props.src}
+      onClick={() => handleThumbnailClick(index + thumbnailStart)}
+      style={{
+        height: '100px',
+        width: '100px',
+        objectFit: 'cover',
+        cursor: 'pointer',
+        marginRight: '10px',
+        border: activeIndex === index + thumbnailStart ? '2px solid black' : '2px solid transparent',
+      }}
+      alt={`Thumbnail ${index + 1}`}
+    />
+  ));
 
   return (
     <Container className="my-4">
@@ -37,66 +91,66 @@ const PropertyInformation = ({ property }) => {
         </Col>
       </Row>
 
-      <Row>
-        <Col xs={12} md={6}>
-          <Card.Img 
-            src={imageUrl} 
-            alt={property.title} 
-            style={{ maxHeight: '350px', objectFit: 'cover', width: '100%' }}
-            className="mb-3"
+      <Row className="mb-4">
+        <Col md={6} className="mb-3">
+          <AliceCarousel
+            ref={carouselRef} 
+            mouseTracking
+            items={items}
+            activeIndex={activeIndex}
+            disableDotsControls
+            onSlideChanged={(e) => setActiveIndex(e.item)} 
           />
-            {/* TO DO */}
-          <Row className="mb-3">
-            {[1, 2, 3, 4].map((index) => (
-              <Col xs={6} sm={3} key={index}>
-                <img
-                  src={`/uploads/${property.title}_${index}.jpg`}
-                  alt={`Imagen ${index}`}
-                  className="img-thumbnail"
-                  style={{ height: '100px', width: '100%', objectFit: 'cover' }}
-                />
-              </Col>
-            ))}
-          </Row>
+          <div className="d-flex justify-content-center mt-3">
+            <Button
+              variant="outline-secondary"
+              onClick={handlePrevThumbnails}
+              disabled={thumbnailStart === 0}
+            >
+              {'<'}
+            </Button>
+            {thumbnails}
+            <Button
+              variant="outline-secondary"
+              onClick={handleNextThumbnails}
+              disabled={thumbnailStart + thumbnailLimit >= items.length}
+            >
+              {'>'}
+            </Button>
+          </div>
         </Col>
-        <Col xs={12} md={6}>
-        <ul className="listado">
+
+        <Col md={6} className="mb-3">
+          <ul className="list-unstyled">
             <li><strong>Provincia:</strong> {property.province}</li>
-            <li><strong>Region:</strong> {property.region}</li>
+            <li><strong>Región:</strong> {property.region}</li>
             <li><strong>Terreno:</strong> {property.landSize} m²</li>
-            {property.salePrice ? 
-            (<li><strong>Precio venta: </strong> {property.salePrice} USD</li>) : 
-            (<li><strong>Precio renta: </strong> {property.rentPrice} USD</li>)
-            }
+            {property.salePrice ? (
+              <li><strong>Precio venta:</strong> {property.salePrice} USD</li>
+            ) : (
+              <li><strong>Precio renta:</strong> {property.rentPrice} USD</li>
+            )}
           </ul>
-        </Col>
-      </Row>
 
-      <Row className="mt-4">
-        <Col xs={12} md={6}>
-          <p>{property.description}</p>
-        </Col>
-
-        <Col xs={12} md={6}>
-          <Card className="mx-auto" style={{ maxWidth: '300px' }}>
+          <Card className="mx-auto" style={{ maxWidth: '100%' }}>
             <Card.Body>
               <Card.Title>Contactar un agente hoy</Card.Title>
-              <Form onSubmit={handleSubmit}> 
+              <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="contactName" className="mb-3">
                   <Form.Label>Nombre completo</Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    placeholder="Ingrese su nombre" 
-                    value={contactName} 
-                    onChange={(e) => setContactName(e.target.value)} 
+                  <Form.Control
+                    type="text"
+                    placeholder="Ingrese su nombre"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
                   />
                 </Form.Group>
 
                 <Form.Group controlId="contactEmail" className="mb-3">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control 
-                    type="email" 
-                    placeholder="Ingrese su email" 
+                  <Form.Control
+                    type="email"
+                    placeholder="Ingrese su email"
                     value={contactEmail}
                     onChange={(e) => setContactEmail(e.target.value)}
                   />
@@ -104,10 +158,10 @@ const PropertyInformation = ({ property }) => {
 
                 <Form.Group controlId="contactMessage" className="mb-3">
                   <Form.Label>Comentarios</Form.Label>
-                  <Form.Control 
-                    as="textarea" 
-                    rows={3} 
-                    placeholder="Escriba su mensaje" 
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Escriba su mensaje"
                     value={contactMessage}
                     onChange={(e) => setContactMessage(e.target.value)}
                   />
@@ -119,6 +173,13 @@ const PropertyInformation = ({ property }) => {
               </Form>
             </Card.Body>
           </Card>
+        </Col>
+      </Row>
+
+      <Row className="mt-4">
+        <Col xs={12}>
+          <h4>Descripción</h4>
+          <p>{property.description}</p>
         </Col>
       </Row>
 

@@ -47,6 +47,7 @@ export const saveProperty = async (propertyData) => {
     salePrice: propertyData.forSale ? propertyData.salePrice : "",
     rentPrice: propertyData.forRent ? propertyData.rentPrice : "",
     createdAt: new Date(),
+    imagesURL: propertyData.images.map((image, index) => `uploads/${propertyData.title}_${index}.jpg`),
   };
 
   const propertyExists = await collection.findOne({ title: newProperty.title });

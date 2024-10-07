@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Row, Col, ToastContainer } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { useLanguage } from '../app/LanguageContext';
+import { ToastContainer, toast } from "react-toastify";
 
 const PropertySearch = ({ toPropertyResults }) => {
   const { language } = useLanguage(); 
