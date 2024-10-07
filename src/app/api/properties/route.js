@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import formidable from 'formidable';
-import path from 'path';
 import { saveProperty } from '../dao/dao';
 
 
