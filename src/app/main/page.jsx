@@ -13,13 +13,14 @@ import { AuthProvider, useAuth } from '../../components/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
 import Search from '../../components/Search';
 import PropertyResults from '../../components/PropertyResults';
+import PropertyInformation from '../../components/PropertyInformation';
 
 const MainApp = () => {
   const { auth, logout } = useAuth();
   const [currentPage, setCurrentPage] = useState('login');
   const [userInfo, setUserInfo] = useState(null); 
   const [filteredProperties, setFilteredProperties] = useState([]); 
-
+  const [selectedProperty, setSelectedProperty] = useState(null); // Para almacenar la propiedad seleccionada
 
   useEffect(() => {
     if (auth) {
@@ -47,9 +48,13 @@ const MainApp = () => {
     }
   }, [auth, logout]);
 
-  const handleNavigation = (page) => {
+  const handleNavigation = (page, property = null) => {
     setCurrentPage(page);
+    if (property) {
+      setSelectedProperty(property); // Guardamos la propiedad seleccionada
+    }
   };
+
   const toPropertyResults = (properties) => {
     setFilteredProperties(properties);
     setCurrentPage('propertyResults');
@@ -105,13 +110,23 @@ const MainApp = () => {
       ) : currentPage === 'propertyResults' ? (  
         <>
           <Header onNavigate={handleNavigation}/>
-          <PropertyResults properties={filteredProperties} /> 
+          <PropertyResults 
+            properties={filteredProperties} 
+            onNavigate={handleNavigation} 
+          /> 
+          <Footer />
+        </>
+      ): currentPage === 'propertyInformation' ? (  
+        <>
+          <Header onNavigate={handleNavigation}/>
+          <PropertyInformation property={selectedProperty} /> 
           <Footer />
         </>
       ): null}
     </div>
   );
 };
+
 
 export default function Home() {
   const [isClient, setIsClient] = useState(false);

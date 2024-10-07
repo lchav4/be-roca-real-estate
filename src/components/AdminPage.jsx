@@ -59,6 +59,44 @@ const NewPropertyForm = () => {
     },
   };
 
+  const propiedades = ["Todos",
+    "Apartamentos",
+    "Bodegas",
+    "Cabinas - Cabañas",
+    "Casas",
+    "Casas de hospedaje",
+    "Centros Turísticos",
+    "Consultorio Médico",
+    "Desarrollos y Proyectos",
+    "Edificios",
+    "Estación de Servicio",
+    "Fincas",
+    "Hoteles",
+    "Locales Comerciales",
+    "Negocios funcionando",
+    "Oficinas",
+    "Quintas",
+    "Restaurantes",
+    "Terrenos | Lotes"
+  ];
+
+  const regiones = [
+    "Todos",
+    "Guanacaste | Pacífico Norte",
+    "Limón | Caribe",
+    "Pérez Zeledón",
+    "Puntarenas | Pacífico sur",
+    "Valle Central",
+    "Zona Norte",
+    "Zona Pacífico Sur"
+  ];
+
+  // Función para formatear los números con comas
+  const formatNumberWithCommas = (value) => {
+    const numberWithoutCommas = value.replace(/,/g, ''); // Remover comas anteriores
+    return numberWithoutCommas.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Agregar comas
+  };
+
   const handleImageChange = async (e) => {
     e.preventDefault();
     const files = Array.from(e.target.files);
@@ -152,14 +190,17 @@ const NewPropertyForm = () => {
             <Col md={6}>
               <Form.Group controlId="formRegion">
                 <Form.Label>{texts[language].region}:</Form.Label>
-                <Form.Control
-                  type="text"
+                <Form.Select
                   name="region"
-                  placeholder={texts[language].region}
                   value={formData.region}
                   onChange={handleChange}
                   required
-                />
+                >
+                  <option value="">{texts[language].select}</option>
+                  {regiones.map((region, index) => (
+                    <option key={index} value={region}>{region}</option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             </Col>
           </Row>
@@ -188,9 +229,9 @@ const NewPropertyForm = () => {
                   required
                 >
                   <option value="">{texts[language].select}</option>
-                  <option value="house">Casa</option>
-                  <option value="apartment">Apartamento</option>
-                  <option value="land">Terreno</option>
+                  {propiedades.map((propiedad, index) => (
+                    <option key={index} value={propiedad}>{propiedad}</option>
+                  ))}
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -198,11 +239,14 @@ const NewPropertyForm = () => {
               <Form.Group controlId="formLandSize">
                 <Form.Label>{texts[language].landSize}:</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text" // Cambiado a texto para formatear con comas
                   name="landSize"
                   placeholder={texts[language].landSize}
                   value={formData.landSize}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const formattedValue = formatNumberWithCommas(e.target.value);
+                    setFormData({ ...formData, landSize: formattedValue });
+                  }}
                   required
                 />
               </Form.Group>
@@ -241,11 +285,14 @@ const NewPropertyForm = () => {
                 <Form.Label>{texts[language].salePrice}:</Form.Label>
                 <InputGroup>
                   <Form.Control
-                    type="number"
+                    type="text" // Cambiado a texto para formatear con comas
                     name="salePrice"
                     placeholder="USD"
                     value={formData.salePrice}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const formattedValue = formatNumberWithCommas(e.target.value);
+                      setFormData({ ...formData, salePrice: formattedValue });
+                    }}
                     disabled={!formData.forSale}
                   />
                   <InputGroup.Checkbox
@@ -264,11 +311,14 @@ const NewPropertyForm = () => {
                 <Form.Label>{texts[language].rentPrice}:</Form.Label>
                 <InputGroup>
                   <Form.Control
-                    type="number"
+                    type="text" // Cambiado a texto para formatear con comas
                     name="rentPrice"
                     placeholder="USD"
                     value={formData.rentPrice}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const formattedValue = formatNumberWithCommas(e.target.value);
+                      setFormData({ ...formData, rentPrice: formattedValue });
+                    }}
                     disabled={!formData.forRent}
                   />
                   <InputGroup.Checkbox
@@ -315,6 +365,3 @@ const NewPropertyForm = () => {
 };
 
 export default NewPropertyForm;
-
-
-

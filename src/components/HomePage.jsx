@@ -27,7 +27,7 @@ const HomePage = () => {
   };
 
   return (
-    <Container fluid className="mt-4">
+    <Container fluid className="mt-4" >
       <Row>
         <Col md={6}>
           <h1>{texts[language].welcome}</h1>

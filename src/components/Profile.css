@@ -77,3 +77,27 @@
     font-size: 2em;
   }
 }
+
+.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.listado {
+  margin-left: 130px;
+}
+
+
+@media (max-width: 450px) {
+  .sticky-footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .listado {
+    margin-left: 0px;
+  }
+}

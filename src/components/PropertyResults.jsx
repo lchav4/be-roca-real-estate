@@ -1,21 +1,25 @@
 import React from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
 
-const PropertyResults = ({ properties }) => {
+const PropertyResults = ({ properties, onNavigate }) => { 
   if (properties.length === 0) {
     return <p>No se encontraron propiedades que coincidan con los criterios de búsqueda.</p>;
   }
 
+  const handleMoreInfo = (property) => {
+    onNavigate('propertyInformation', property); 
+  };
+
   return (
-    <Row className="justify-content-center"> 
+    <Row className="justify-content-center">
       {properties.map((property) => {
-        const imageUrl = `/uploads/${property.title}_0.jpg`; 
+        const imageUrl = `/uploads/${property.title}_0.jpg`;
 
         return (
-          <Col key={property.id} md={10} lg={10} className="mb-4 d-flex justify-content-center"> 
-            <Card style={{ border: '1px solid #ddd', borderRadius: '8px', width: '100%', display: 'flex' }}> 
+          <Col key={property.id} md={10} lg={10} className="mb-4 d-flex justify-content-center">
+            <Card style={{ border: '1px solid #ddd', borderRadius: '8px', width: '100%', display: 'flex' }}>
               <Row style={{ width: '100%' }}>
-                <Col xs={12} md={4} className="d-flex justify-content-center"> 
+                <Col xs={12} md={4} className="d-flex justify-content-center">
                   <Card.Img 
                     variant="top" 
                     src={imageUrl} 
@@ -33,7 +37,13 @@ const PropertyResults = ({ properties }) => {
                       <strong>Ubicación:</strong> {property.location}<br />
                       <strong>Tipo:</strong> {property.propertyType}<br />
                     </Card.Text>
-                    <Button variant="primary" style={{ marginTop: 'auto' }}>Más Información</Button>
+                    <Button 
+                      variant="primary" 
+                      style={{ marginTop: 'auto' }}
+                      onClick={() => handleMoreInfo(property)} 
+                    >
+                      Más Información
+                    </Button>
                   </Card.Body>
                 </Col>
               </Row>
