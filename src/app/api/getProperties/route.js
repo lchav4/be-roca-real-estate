@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getProperties } from '../dao/dao';
 
-export const GET = async (req) => {
+export const POST = async (req) => {
   try {
-    const properties = await getProperties();
+    const body = await req.text();
+    const filters = JSON.parse(body).filters;
+    const properties = await getProperties(filters);
+
     return NextResponse.json(properties, { status: 200 });
   } catch (err) {
     return NextResponse.json(

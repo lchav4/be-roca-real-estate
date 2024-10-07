@@ -22,8 +22,8 @@ export const POST = async (req) => {
       description: data.get('description'),
       salePrice: data.get('salePrice'),
       rentPrice: data.get('rentPrice'),
-      forSale: data.get('forSale') === 'on',
-      forRent: data.get('forRent') === 'on',
+      forSale: data.get('forSale'),
+      forRent: data.get('forRent'),
       images,
     };
     

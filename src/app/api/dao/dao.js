@@ -38,7 +38,6 @@ export const saveProperty = async (propertyData) => {
   }
 
   const newProperty = {
-    province: propertyData.province,
     region: propertyData.region,
     location: propertyData.location,
     propertyType: propertyData.propertyType,
@@ -123,8 +122,25 @@ async function verifyPassword(password, hash) {
   return isMatch;
 }
 
-export const getProperties = async () => {
+export const getProperties = async (filters) => {
   await connectDB();
   const properties = await db.collection("properties").find().toArray();
-  return properties;
+
+  const filteredProperties = properties.filter(
+    (property) =>
+      (filters.propertyType === "Todos" ||
+        property.propertyType === filters.propertyType) &&
+      (filters.region === "Todos" || property.region === filters.region) &&
+      property.landSize >= filters.minSize &&
+      property.landSize <= filters.maxSize &&
+      ((property.salePrice >= filters.minPrice &&
+        property.salePrice <= filters.maxPrice) ||
+        (property.rentPrice >= filters.minPrice &&
+          property.rentPrice <= filters.maxPrice)) &&
+      (filters.purpose === "Ambos" ||
+        (filters.purpose === "Comprar" && property.salePrice) ||
+        (filters.purpose === "Alquilar" && property.rentPrice))
+  );
+
+  return filteredProperties;
 };

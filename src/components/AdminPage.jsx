@@ -7,7 +7,6 @@ const NewPropertyForm = () => {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [formData, setFormData] = useState({
-    province: "",
     region: "",
     location: "",
     propertyType: "",
@@ -26,7 +25,6 @@ const NewPropertyForm = () => {
     es: {
       newAd: "Nuevo Anuncio",
       location: "Ubicación",
-      province: "Provincia",
       region: "Región",
       locationField: "Localización",
       propertyType: "Tipo de propiedad",
@@ -43,7 +41,6 @@ const NewPropertyForm = () => {
     en: {
       newAd: "New Ad",
       location: "Location",
-      province: "Province",
       region: "Region",
       locationField: "Address",
       propertyType: "Property Type",
@@ -59,7 +56,7 @@ const NewPropertyForm = () => {
     },
   };
 
-  const propiedades = ["Todos",
+  const propiedades = [
     "Apartamentos",
     "Bodegas",
     "Cabinas - Cabañas",
@@ -81,7 +78,6 @@ const NewPropertyForm = () => {
   ];
 
   const regiones = [
-    "Todos",
     "Guanacaste | Pacífico Norte",
     "Limón | Caribe",
     "Pérez Zeledón",
@@ -127,6 +123,8 @@ const NewPropertyForm = () => {
         formDataObj.append(`image[${index}]`, image);
       });
 
+      console.log("formDataObj", formDataObj);
+
       const response = await fetch("/api/properties", {
         method: "POST",
         body: formDataObj,
@@ -140,7 +138,6 @@ const NewPropertyForm = () => {
       }
 
       setFormData({
-        province: "",
         region: "",
         location: "",
         propertyType: "",
@@ -167,27 +164,7 @@ const NewPropertyForm = () => {
         <Form onSubmit={handleSubmit}>
           <h4>{texts[language].location}</h4>
           <Row className="mb-3">
-            <Col md={6}>
-              <Form.Group controlId="formProvince">
-                <Form.Label>{texts[language].province}:</Form.Label>
-                <Form.Select
-                  name="province"
-                  value={formData.province}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">{texts[language].select}</option>
-                  <option value="San José">San José</option>
-                  <option value="Alajuela">Alajuela</option>
-                  <option value="Cartago">Cartago</option>
-                  <option value="Guanacaste">Guanacaste</option>
-                  <option value="Heredia">Heredia</option>
-                  <option value="Puntarenas">Puntarenas</option>
-                  <option value="Limón">Limón</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col md={6}>
+
               <Form.Group controlId="formRegion">
                 <Form.Label>{texts[language].region}:</Form.Label>
                 <Form.Select
@@ -202,7 +179,7 @@ const NewPropertyForm = () => {
                   ))}
                 </Form.Select>
               </Form.Group>
-            </Col>
+
           </Row>
 
           <Form.Group controlId="formLocation" className="mb-3">

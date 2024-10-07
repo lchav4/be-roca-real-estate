@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Row, Col } from 'react-bootstrap';
+import { Container, Form, Button, Row, Col, ToastContainer } from 'react-bootstrap';
 import { useLanguage } from '../app/LanguageContext';
 
 const PropertySearch = ({ toPropertyResults }) => {
@@ -23,6 +23,7 @@ const PropertySearch = ({ toPropertyResults }) => {
       searchButton: 'Buscar',
       buy: 'Comprar',
       rent: 'Alquilar',
+      both: 'Ambos'
     },
     en: {
       title: 'Search Properties',
@@ -34,6 +35,7 @@ const PropertySearch = ({ toPropertyResults }) => {
       searchButton: 'Search',
       buy: 'Buy',
       rent: 'Rent',
+      both: 'Both'
     },
   };
 
@@ -77,26 +79,40 @@ const PropertySearch = ({ toPropertyResults }) => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    const filters = {
+      propertyType,
+      region,
+      minSize: parseInt(minSize.replace(/,/g, '')),
+      maxSize: parseInt(maxSize.replace(/,/g, '')),
+      minPrice: parseInt(minPrice.replace(/,/g, '')),
+      maxPrice: parseInt(maxPrice.replace(/,/g, '')),
+      purpose
+    }
 
     try {
-      const response = await fetch('/api/allProperties'); 
+      const response = await fetch('/api/getProperties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({filters}),
+      })
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const properties = await response.json();
-    
-      // TO DO: Filtrar las propiedades
-      console.log(properties);
 
-      toPropertyResults(properties); // Pasar las propiedades filtradas
+      toPropertyResults(properties);
 
     } catch (error) {
-      console.error("Error fetching properties:", error);
+      toast.error(error.message);
     }
   };
 
   return (
-    <Container className="pt-5 mt-5" style={{ maxWidth: '600px' }}>
+    <>
+    <ToastContainer/>
+    <Container className="pt-5 mt-5" style={{ maxWidth: '650px' }}>
       <h2 className="text-center mb-4">{texts[language].title}</h2>
       <Form onSubmit={handleSearch}>
         <Form.Group as={Row} className="mb-3">
@@ -182,6 +198,15 @@ const PropertySearch = ({ toPropertyResults }) => {
               checked={purpose === 'Alquilar'}
               onChange={() => setPurpose('Alquilar')}
             />
+            <Form.Check
+              inline
+              type="radio"
+              label={texts[language].both} 
+              name="purpose"
+              id="rent"
+              checked={purpose === 'Ambos'}
+              onChange={() => setPurpose('Ambos')}
+            />
           </Col>
         </Form.Group>
 
@@ -192,6 +217,7 @@ const PropertySearch = ({ toPropertyResults }) => {
         </div>
       </Form>
     </Container>
+    </>
   );
 };
 

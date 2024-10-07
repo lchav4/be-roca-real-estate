@@ -12,10 +12,10 @@ const PropertyInformation = ({ property }) => {
   }
 
   const imageUrl = `/uploads/${property.title}_0.jpg`;
-  const phoneNumber = '50687300459'; 
+  const phoneNumber = '50684613257'; 
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // Evita que el formulario se envíe y recargue la página
+    e.preventDefault();
 
     const message = `Hola, me interesa la propiedad: ${property.title}.\nMi nombre es ${contactName}.\nPuedes contactarme al email: ${contactEmail}.\n Comentarios: ${contactMessage}`;
     const encodedMessage = encodeURIComponent(message);
@@ -64,7 +64,10 @@ const PropertyInformation = ({ property }) => {
             <li><strong>Provincia:</strong> {property.province}</li>
             <li><strong>Region:</strong> {property.region}</li>
             <li><strong>Terreno:</strong> {property.landSize} m²</li>
-            <li><strong>Precio Venta:</strong> {property.salePrice} USD</li>
+            {property.salePrice ? 
+            (<li><strong>Precio venta: </strong> {property.salePrice} USD</li>) : 
+            (<li><strong>Precio renta: </strong> {property.rentPrice} USD</li>)
+            }
           </ul>
         </Col>
       </Row>
