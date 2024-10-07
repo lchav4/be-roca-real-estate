@@ -22,7 +22,7 @@ const Header = ({ onNavigate }) => {
     es: {
       home: 'Inicio',
       search: 'Buscar',
-      admin: 'Admin',
+      admin: 'Publicar propiedad',
       profile: 'Perfil',
       english: 'Inglés',
       logout: 'Cerrar sesión',
@@ -30,7 +30,7 @@ const Header = ({ onNavigate }) => {
     en: {
       home: 'Home',
       search: 'Search',
-      admin: 'Admin',
+      admin: 'Publish property',
       profile: 'Profile',
       english: 'Spanish',
       logout: 'Logout',
