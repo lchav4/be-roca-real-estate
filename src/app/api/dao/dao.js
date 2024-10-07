@@ -122,3 +122,9 @@ async function verifyPassword(password, hash) {
   const isMatch = await bcrypt.compare(password, hash);
   return isMatch;
 }
+
+export const getProperties = async () => {
+  await connectDB();
+  const properties = await db.collection("properties").find().toArray();
+  return properties;
+};

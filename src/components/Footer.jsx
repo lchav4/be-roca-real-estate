@@ -19,7 +19,7 @@ const Footer = () => {
   };
 
   return (
-<footer className="bg-dark text-light" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, borderTop: '1px solid #dee2e6' }}>
+    <footer className="bg-dark text-light" style={{ position: 'sticky', bottom: 0, left: 0, right: 0, borderTop: '1px solid #dee2e6' }}>
       <Container fluid>
         <Row className="py-2 align-items-center">
           <Col xs={12} md={4} className="text-center text-md-start">
@@ -34,7 +34,6 @@ const Footer = () => {
         </Row>
       </Container>
     </footer>
-
   );
 };
 

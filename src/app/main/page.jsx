@@ -12,11 +12,14 @@ import { LanguageProvider } from '../LanguageContext';
 import { AuthProvider, useAuth } from '../../components/AuthProvider';
 import { jwtDecode } from 'jwt-decode';
 import Search from '../../components/Search';
+import PropertyResults from '../../components/PropertyResults';
 
 const MainApp = () => {
   const { auth, logout } = useAuth();
   const [currentPage, setCurrentPage] = useState('login');
   const [userInfo, setUserInfo] = useState(null); 
+  const [filteredProperties, setFilteredProperties] = useState([]); 
+
 
   useEffect(() => {
     if (auth) {
@@ -47,6 +50,10 @@ const MainApp = () => {
   const handleNavigation = (page) => {
     setCurrentPage(page);
   };
+  const toPropertyResults = (properties) => {
+    setFilteredProperties(properties);
+    setCurrentPage('propertyResults');
+  };
 
   return (
     <div>
@@ -73,8 +80,8 @@ const MainApp = () => {
         </>
       ) : currentPage === 'search' ? (
         <>
-          <Header onNavigate={handleNavigation} />
-          <Search />
+          <Header onNavigate={handleNavigation}  />
+          <Search toPropertyResults={toPropertyResults} />
           <Footer />
         </>
       ) : currentPage === 'profile' ? (
@@ -95,7 +102,13 @@ const MainApp = () => {
           <AdminPage />  
           <Footer />
         </>
-      ) : null}
+      ) : currentPage === 'propertyResults' ? (  
+        <>
+          <Header onNavigate={handleNavigation}/>
+          <PropertyResults properties={filteredProperties} /> 
+          <Footer />
+        </>
+      ): null}
     </div>
   );
 };

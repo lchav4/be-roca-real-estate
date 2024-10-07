@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Row, Col, InputGroup } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
+import { useLanguage } from "../app/LanguageContext"; 
 
 const NewPropertyForm = () => {
   const [images, setImages] = useState([]);
@@ -18,6 +19,45 @@ const NewPropertyForm = () => {
     forSale: false,
     forRent: false,
   });
+
+  const { language } = useLanguage(); 
+
+  const texts = {
+    es: {
+      newAd: "Nuevo Anuncio",
+      location: "Ubicación",
+      province: "Provincia",
+      region: "Región",
+      locationField: "Localización",
+      propertyType: "Tipo de propiedad",
+      landSize: "Tamaño del terreno (m²)",
+      title: "Título Breve",
+      description: "Descripción",
+      salePrice: "Precio de venta",
+      rentPrice: "Alquiler mensual",
+      forSale: "¿Ofrece la propiedad para la venta?",
+      forRent: "¿Ofrece la propiedad para alquiler a largo plazo?",
+      propertyImage: "Imagen de la propiedad",
+      publish: "Publicar",
+    },
+    en: {
+      newAd: "New Ad",
+      location: "Location",
+      province: "Province",
+      region: "Region",
+      locationField: "Address",
+      propertyType: "Property Type",
+      landSize: "Land Size (m²)",
+      title: "Short Title",
+      description: "Description",
+      salePrice: "Sale Price",
+      rentPrice: "Monthly Rent",
+      forSale: "Is the property for sale?",
+      forRent: "Is the property for rent?",
+      propertyImage: "Property Image",
+      publish: "Publish",
+    },
+  };
 
   const handleImageChange = async (e) => {
     e.preventDefault();
@@ -51,7 +91,7 @@ const NewPropertyForm = () => {
 
       const response = await fetch("/api/properties", {
         method: "POST",
-        body: formDataObj
+        body: formDataObj,
       });
 
       const data = await response.json();
@@ -85,20 +125,20 @@ const NewPropertyForm = () => {
     <>
       <ToastContainer />
       <Container className="my-4">
-        <h2 className="text-center mb-4">Nuevo Anuncio</h2>
+        <h2 className="text-center mb-4">{texts[language].newAd}</h2>
         <Form onSubmit={handleSubmit}>
-          <h4>Ubicación</h4>
+          <h4>{texts[language].location}</h4>
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group controlId="formProvince">
-                <Form.Label>Provincia:</Form.Label>
+                <Form.Label>{texts[language].province}:</Form.Label>
                 <Form.Select
                   name="province"
                   value={formData.province}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Seleccionar</option>
+                  <option value="">{texts[language].select}</option>
                   <option value="San José">San José</option>
                   <option value="Alajuela">Alajuela</option>
                   <option value="Cartago">Cartago</option>
@@ -111,11 +151,11 @@ const NewPropertyForm = () => {
             </Col>
             <Col md={6}>
               <Form.Group controlId="formRegion">
-                <Form.Label>Región:</Form.Label>
+                <Form.Label>{texts[language].region}:</Form.Label>
                 <Form.Control
                   type="text"
                   name="region"
-                  placeholder="Escriba la región"
+                  placeholder={texts[language].region}
                   value={formData.region}
                   onChange={handleChange}
                   required
@@ -125,29 +165,29 @@ const NewPropertyForm = () => {
           </Row>
 
           <Form.Group controlId="formLocation" className="mb-3">
-            <Form.Label>Localización:</Form.Label>
+            <Form.Label>{texts[language].locationField}:</Form.Label>
             <Form.Control
               type="text"
               name="location"
-              placeholder="Dirección"
+              placeholder={texts[language].locationField}
               value={formData.location}
               onChange={handleChange}
               required
             />
           </Form.Group>
 
-          <h4>Características</h4>
+          <h4>{texts[language].propertyType}</h4>
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group controlId="formPropertyType">
-                <Form.Label>Tipo de propiedad:</Form.Label>
+                <Form.Label>{texts[language].propertyType}:</Form.Label>
                 <Form.Select
                   name="propertyType"
                   value={formData.propertyType}
                   onChange={handleChange}
                   required
                 >
-                  <option value="">Seleccionar</option>
+                  <option value="">{texts[language].select}</option>
                   <option value="house">Casa</option>
                   <option value="apartment">Apartamento</option>
                   <option value="land">Terreno</option>
@@ -156,11 +196,11 @@ const NewPropertyForm = () => {
             </Col>
             <Col md={6}>
               <Form.Group controlId="formLandSize">
-                <Form.Label>Tamaño del terreno (m²):</Form.Label>
+                <Form.Label>{texts[language].landSize}:</Form.Label>
                 <Form.Control
                   type="number"
                   name="landSize"
-                  placeholder="Tamaño en m²"
+                  placeholder={texts[language].landSize}
                   value={formData.landSize}
                   onChange={handleChange}
                   required
@@ -170,11 +210,11 @@ const NewPropertyForm = () => {
           </Row>
 
           <Form.Group controlId="formTitle" className="mb-3">
-            <Form.Label>Título Breve:</Form.Label>
+            <Form.Label>{texts[language].title}:</Form.Label>
             <Form.Control
               type="text"
               name="title"
-              placeholder="Título Breve"
+              placeholder={texts[language].title}
               value={formData.title}
               onChange={handleChange}
               required
@@ -182,11 +222,11 @@ const NewPropertyForm = () => {
           </Form.Group>
 
           <Form.Group controlId="formDescription" className="mb-3">
-            <Form.Label>Descripción:</Form.Label>
+            <Form.Label>{texts[language].description}:</Form.Label>
             <Form.Control
               as="textarea"
               name="description"
-              placeholder="Ingrese una descripción de la propiedad"
+              placeholder={texts[language].description}
               value={formData.description}
               onChange={handleChange}
               rows={4}
@@ -194,11 +234,11 @@ const NewPropertyForm = () => {
             />
           </Form.Group>
 
-          <h4>Precio</h4>
+          <h4>{texts[language].salePrice}</h4>
           <Row className="mb-3">
             <Col md={6}>
               <Form.Group controlId="formSalePrice">
-                <Form.Label>Precio de venta:</Form.Label>
+                <Form.Label>{texts[language].salePrice}:</Form.Label>
                 <InputGroup>
                   <Form.Control
                     type="number"
@@ -214,14 +254,14 @@ const NewPropertyForm = () => {
                     onChange={handleChange}
                   />
                   <Form.Label className="ms-2">
-                    ¿Ofrece la propiedad para la venta?
+                    {texts[language].forSale}
                   </Form.Label>
                 </InputGroup>
               </Form.Group>
             </Col>
             <Col md={6}>
               <Form.Group controlId="formRentPrice">
-                <Form.Label>Alquiler mensual:</Form.Label>
+                <Form.Label>{texts[language].rentPrice}:</Form.Label>
                 <InputGroup>
                   <Form.Control
                     type="number"
@@ -237,40 +277,36 @@ const NewPropertyForm = () => {
                     onChange={handleChange}
                   />
                   <Form.Label className="ms-2">
-                    ¿Ofrece la propiedad para alquiler a largo plazo?
+                    {texts[language].forRent}
                   </Form.Label>
                 </InputGroup>
               </Form.Group>
             </Col>
-            <Form.Group controlId="formFile" className="mb-3">
-              <Form.Label>Imagen de la propiedad</Form.Label>
-              <Form.Control
-                type="file"
-                multiple
-                onChange={(e) => {
-                  handleImageChange(e);
-                }}
-              />
-              <div className="image-previews">
-                {imagePreviews.map((preview, index) => (
-                  <img
-                    key={index}
-                    src={preview}
-                    alt={`Preview ${index}`}
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      objectFit: "cover",
-                      margin: "5px",
-                    }}
-                  />
-                ))}
-              </div>
-            </Form.Group>
           </Row>
 
+          <Form.Group controlId="formPropertyImage" className="mb-3">
+            <Form.Label>{texts[language].propertyImage}:</Form.Label>
+            <Form.Control
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageChange}
+            />
+            <div className="mt-3">
+              {imagePreviews.map((preview, index) => (
+                <img
+                  key={index}
+                  src={preview}
+                  alt={`preview-${index}`}
+                  className="img-thumbnail"
+                  style={{ width: "150px", marginRight: "10px" }}
+                />
+              ))}
+            </div>
+          </Form.Group>
+
           <Button variant="primary" type="submit" className="w-100 mb-4">
-            Publicar
+            {texts[language].publish}
           </Button>
         </Form>
       </Container>
@@ -279,3 +315,6 @@ const NewPropertyForm = () => {
 };
 
 export default NewPropertyForm;
+
+
+

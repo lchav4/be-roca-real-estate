@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { useLanguage } from '../app/LanguageContext';
 
-const PropertySearch = () => {
+
+const PropertySearch = ({ toPropertyResults }) => {
   const { language } = useLanguage(); 
   const [propertyType, setPropertyType] = useState('Todos');
   const [region, setRegion] = useState('Todos');
@@ -11,6 +12,7 @@ const PropertySearch = () => {
   const [minPrice, setMinPrice] = useState('1');
   const [maxPrice, setMaxPrice] = useState('99999');
   const [purpose, setPurpose] = useState('Comprar');
+
 
   const texts = {
     es: {
@@ -70,10 +72,28 @@ const PropertySearch = () => {
 ];
 
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+const handleSearch = async (e) => {
+  e.preventDefault();
 
-  };
+  try {
+    const response = await fetch('/api/allProperties'); 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const properties = await response.json();
+  
+    //TO DO: Filtrar las propiedades
+  
+    console.log(properties);
+
+    toPropertyResults(properties); //aqui pasar las propiedades filtradas
+
+  } catch (error) {
+    console.error("Error fetching properties:", error);
+  }
+};
+
+
 
   return (
     <Container className="pt-5 mt-5" style={{ maxWidth: '600px' }}>
