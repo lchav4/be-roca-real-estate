@@ -5,8 +5,6 @@ export const POST = async (req) => {
   try {
     const { currentEmail, newEmail, username } = await req.json(); 
 
-    console.log("Datos recibidos en el backend:", { currentEmail, newEmail, username });
-
    
     if (currentEmail === newEmail && !username) {
       throw new Error("Ningún campo ha sido modificado.");
@@ -14,7 +12,7 @@ export const POST = async (req) => {
 
    
     const updatedFields = {};
-    if (newEmail) updatedFields.email = newEmail;
+    if (newEmail !== currentEmail) updatedFields.email = newEmail;
     if (username) updatedFields.name = username;
 
     
@@ -30,7 +28,6 @@ export const POST = async (req) => {
       throw new Error("No se pudo actualizar el perfil.");
     }
   } catch (error) {
-    console.error("Error en la actualización:", error); 
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 };

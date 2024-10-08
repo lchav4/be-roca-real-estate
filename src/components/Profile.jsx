@@ -38,9 +38,6 @@ const Profile = ({ user }) => {
       return;
     }
 
-    console.log("Enviando datos al backend:", updatedUser);
-    console.log("Email actual:", user.email);
-
     try {
       const response = await fetch("/api/updateProfile", {
         method: "POST",
