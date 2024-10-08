@@ -145,3 +145,32 @@ export const getProperties = async (filters) => {
 
   return filteredProperties;
 };
+
+export const updateProfile = async (currentEmail, updatedFields) => {
+  try {
+    await connectDB();
+
+   
+    if (updatedFields.email) {
+      const emailExists = await db.collection("users").findOne({ email: updatedFields.email });
+      if (emailExists) {
+        throw new Error("El nuevo correo electrónico ya está en uso.");
+      }
+    }
+
+    const result = await db.collection("users").updateOne(
+      { email: currentEmail },  
+      { $set: updatedFields }  
+    );
+
+    if (result.modifiedCount > 0) {
+      return true;  
+    } else {
+      throw new Error("No se pudo actualizar el perfil. Es posible que no haya cambios.");
+    }
+  } catch (error) {
+    throw new Error("Error al actualizar el perfil: " + error.message);
+  }
+};
+
+
