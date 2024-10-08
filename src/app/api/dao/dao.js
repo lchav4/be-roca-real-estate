@@ -44,8 +44,8 @@ export const saveProperty = async (propertyData) => {
     landSize: propertyData.landSize,
     title: propertyData.title,
     description: propertyData.description,
-    salePrice: propertyData.forSale === true ? propertyData.salePrice : "",
-    rentPrice: propertyData.forRent === true ? propertyData.rentPrice : "",
+    salePrice: propertyData.forSale === 'true' ? propertyData.salePrice : "",
+    rentPrice: propertyData.forRent === 'true' ? propertyData.rentPrice : "",
     createdAt: new Date(),
     imagesURL: propertyData.images.map((image, index) => `uploads/${propertyData.title}_${index}.jpg`),
   };
