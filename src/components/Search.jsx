@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { useLanguage } from '../app/LanguageContext';
 import { ToastContainer, toast } from "react-toastify";
+import { Hourglass } from 'react-loader-spinner';
 
 const PropertySearch = ({ toPropertyResults }) => {
   const { language } = useLanguage(); 
@@ -12,6 +13,7 @@ const PropertySearch = ({ toPropertyResults }) => {
   const [minPrice, setMinPrice] = useState('1');
   const [maxPrice, setMaxPrice] = useState('99999');
   const [purpose, setPurpose] = useState('Comprar');
+  const [loading, setLoading] = useState(false);
 
   const texts = {
     es: {
@@ -89,6 +91,7 @@ const PropertySearch = ({ toPropertyResults }) => {
       maxPrice: parseInt(maxPrice.replace(/,/g, '')),
       purpose
     }
+    setLoading(true);
 
     try {
       const response = await fetch('/api/getProperties', {
@@ -102,10 +105,11 @@ const PropertySearch = ({ toPropertyResults }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const properties = await response.json();
-
+      setLoading(false);
       toPropertyResults(properties);
 
     } catch (error) {
+      setLoading(false);
       toast.error(error.message);
     }
   };
@@ -213,7 +217,9 @@ const PropertySearch = ({ toPropertyResults }) => {
 
         <div className="d-flex justify-content-center mt-5" style={{paddingBottom: 20}}>
           <Button variant="primary" type="submit">
-            {texts[language].searchButton}
+            {loading ?
+            (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
+            texts[language].searchButton}
           </Button>
         </div>
       </Form>

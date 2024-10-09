@@ -5,11 +5,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import { useAuth } from './AuthProvider';
 import { useLanguage } from '../app/LanguageContext';
+import { Hourglass } from 'react-loader-spinner'
 
 const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const { language } = useLanguage();
 
@@ -38,6 +40,7 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
       console.log('Form submitted', { email, password });
       if (email.length === 0 || password.length === 0)
         throw new Error('Email and password are required');
+      setLoading(true);
 
       const response = await fetch('/api/login', { 
         method: 'POST',
@@ -49,7 +52,7 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
 
       const data = await response.json();
 
-
+      setLoading(false);
       if (response.status === 200) {
         const { token } = data;
         login(token);
@@ -58,6 +61,7 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
         throw new Error(data.error); 
       }
     } catch (error) {
+      setLoading(false);
       toast.error(error.message); 
       console.error('An error occurred', error);
     }
@@ -110,8 +114,11 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
               </Button>
             </div>
 
-            <Button variant="dark" type="submit" className="w-100">
-              {texts[language].continue}
+            <Button variant="dark" type="submit" className="w-100 d-flex justify-content-center align-items-center">
+              {loading ? 
+              (<Hourglass radius={"5px"} height={30} width={30} />) :
+              texts[language].continue}
+              
             </Button>
           </Form>
           <div className="text-center mt-3">

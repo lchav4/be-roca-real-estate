@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import { connectDB, db } from "../../database/db";
 import bcrypt from "bcryptjs";
 import fs from "fs/promises";
+import { title } from "process";
 
 const saltRounds = 10;
 
@@ -173,4 +174,36 @@ export const updateProfile = async (currentEmail, updatedFields) => {
   }
 };
 
+export const addFavorite = async (email, propertyId, isAdding) => {
+  await connectDB();
+  const user = await db.collection("users").findOne({ email });
 
+  if (!user) {
+    throw new Error("Usuario no encontrado");
+  }
+
+  const property = await db.collection("properties").findOne({ title: propertyId });
+
+  const propertyObjectId = property._id.toString();
+
+  if (isAdding) {
+    await db.collection("users").updateOne(
+      { email },
+      { $addToSet: { favorites: propertyObjectId } }
+    );
+  } else {
+    await db.collection("users").updateOne(
+      { email },
+      { $pull: { favorites: propertyObjectId } }
+    );
+  }
+
+  return true;
+}
+
+export const getFavorites = async (email) => {
+  await connectDB();
+  const user = await db.collection("users").findOne({ email });
+  const favorites = user.favorites;
+  return favorites;
+}
