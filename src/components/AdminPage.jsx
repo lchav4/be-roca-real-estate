@@ -87,12 +87,6 @@ const NewPropertyForm = () => {
     "Zona Pacífico Sur"
   ];
 
-  // Función para formatear los números con comas
-  const formatNumberWithCommas = (value) => {
-    const numberWithoutCommas = value.replace(/,/g, ''); // Remover comas anteriores
-    return numberWithoutCommas.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Agregar comas
-  };
-
   const handleImageChange = async (e) => {
     e.preventDefault();
     const files = Array.from(e.target.files);
@@ -221,8 +215,7 @@ const NewPropertyForm = () => {
                   placeholder={texts[language].landSize}
                   value={formData.landSize}
                   onChange={(e) => {
-                    const formattedValue = formatNumberWithCommas(e.target.value);
-                    setFormData({ ...formData, landSize: formattedValue });
+                    setFormData({ ...formData, landSize: e.target.value });
                   }}
                   required
                 />
@@ -267,8 +260,7 @@ const NewPropertyForm = () => {
                     placeholder="USD"
                     value={formData.salePrice}
                     onChange={(e) => {
-                      const formattedValue = formatNumberWithCommas(e.target.value);
-                      setFormData({ ...formData, salePrice: formattedValue });
+                      setFormData({ ...formData, salePrice: e.target.value });
                     }}
                     disabled={!formData.forSale}
                   />
@@ -293,8 +285,7 @@ const NewPropertyForm = () => {
                     placeholder="USD"
                     value={formData.rentPrice}
                     onChange={(e) => {
-                      const formattedValue = formatNumberWithCommas(e.target.value);
-                      setFormData({ ...formData, rentPrice: formattedValue });
+                      setFormData({ ...formData, rentPrice: e.target.value });
                     }}
                     disabled={!formData.forRent}
                   />
