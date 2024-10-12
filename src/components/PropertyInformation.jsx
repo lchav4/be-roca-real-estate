@@ -239,19 +239,6 @@ const PropertyInformation = ({ property }) => {
                   </Form>
               </Card.Body>
             </Card>
-            <div className="mt-4">
-              <Button
-                variant="outline-primary"
-                onClick={handleFavorite}
-                className="me-2"
-              >
-                {favorite ? <FaHeart /> : <FaRegHeart />}
-                {favorite ? ` ${texts[language].savedFavorites}` : ` ${texts[language].saveFavorites}`}
-              </Button>
-              <Button variant="secondary" onClick={() => window.history.back()}>
-                {texts[language].back}
-              </Button>
-            </div>
           </Col>
         </Row>
 
@@ -265,20 +252,17 @@ const PropertyInformation = ({ property }) => {
 
         <Row className="mt-4">
           <Col className="d-flex justify-content-between" >
-            <Button variant="secondary">Regresar</Button>
-            <Button variant="primary" onClick={handleFavorite}>
-              {favorite ? (
-                <>
-                  Guardado en favoritos
-                  <FaHeart className="m-1" />
-                </>
-              ) : (
-                <>
-                  Guardar en favoritos
-                  <FaRegHeart className="m-1" />
-                </>
-              )}
-            </Button>
+          <Button variant="secondary" onClick={() => window.history.back()}>
+                {texts[language].back}
+          </Button>
+          <Button
+                variant="outline-primary"
+                onClick={handleFavorite}
+                className="me-2"
+              >
+                {favorite ? <FaHeart /> : <FaRegHeart />}
+                {favorite ? ` ${texts[language].savedFavorites}` : ` ${texts[language].saveFavorites}`}
+              </Button>
           </Col>
         </Row>
       </Container>
