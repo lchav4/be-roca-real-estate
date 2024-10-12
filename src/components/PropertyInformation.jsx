@@ -182,17 +182,19 @@ const PropertyInformation = ({ property }) => {
 
           <Col xs={12} md={6} className="mb-3" style={{ paddingLeft: "50px" }}>
             <ul className="listado">
-              
+            <li>
+                <strong>{texts[language].region}</strong> {property.region} m²
+              </li>
               <li>
                 <strong>{texts[language].landSize}</strong> {property.landSize} m²
               </li>
               {property.salePrice ? (
                 <li>
-                  <strong>Precio venta: </strong> ${property.salePrice} USD
+                  <strong>{texts[language].salePrice}</strong> ${property.salePrice} USD
                 </li>
               ) : (
                 <li>
-                  <strong>Precio renta: </strong> ${property.rentPrice} USD
+                  <strong>{texts[language].rentPrice} </strong> ${property.rentPrice} USD
                 </li>
               )}
             </ul>
