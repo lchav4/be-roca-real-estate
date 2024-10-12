@@ -25,6 +25,8 @@ const ForgotPassword = ({ onBackToLogin }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const actualLanguage=language;
     try {
       if (email.length === 0) throw new Error('Email is required');
 
@@ -33,7 +35,7 @@ const ForgotPassword = ({ onBackToLogin }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email,actualLanguage }),
       });
 
       const data = await response.json();
