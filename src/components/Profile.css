@@ -98,3 +98,102 @@
   padding: 10px;
   box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
 }
+
+
+
+/* Profile.css */
+
+/* Main image styling */
+.alice-carousel__stage-item img {
+  height: 400px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 8px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.alice-carousel__stage-item img:hover {
+  transform: scale(1.02); /* Slight zoom on hover */
+}
+
+/* Thumbnail styling */
+.m-2 {
+  border: 2px solid transparent;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.m-2:hover {
+  border: 2px solid #007bff; /* Highlight on hover */
+}
+
+.m-2.selected {
+  border: 2px solid #007bff; /* Highlight selected thumbnail */
+}
+
+/* Carousel navigation buttons */
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #cccccc;
+}
+
+/* Contact Form */
+form {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+form input,
+form textarea {
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  transition: border 0.2s ease;
+}
+
+form input:focus,
+form textarea:focus {
+  border-color: #007bff;
+}
+
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* Overall container styling */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+
+.responsive {
+  margin-top: 1.5rem !important;
+  margin-bottom: 4rem !important;
+}

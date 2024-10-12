@@ -49,7 +49,7 @@ const PropertyInformation = ({ property }) => {
 
     const message = `Hola, me interesa la propiedad: ${property.title}.\nMi nombre es ${contactName}.\nPuedes contactarme al email: ${contactEmail}.\n Comentarios: ${contactMessage}`;
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/50684613257?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/50684516553?text=${encodedMessage}`;
 
     window.open(whatsappUrl, "_blank");
 
@@ -63,7 +63,7 @@ const PropertyInformation = ({ property }) => {
   const items = property.imagesURL.map((imageURL, index) => (
     <img
       src={imageURL}
-      style={{ height: "600px", objectFit: "cover", width: "100%" }}
+      style={{ height: "300px", objectFit: "cover", width: "100%" }}
       alt={`Imagen ${index + 1}`}
       onDragStart={handleDragStart}
     />
@@ -75,6 +75,7 @@ const PropertyInformation = ({ property }) => {
       carouselRef.current.slideTo(index);
     }
   };
+  
 
   // Mostrar solo las miniaturas dentro del límite
   const visibleThumbnails = items.slice(
@@ -97,7 +98,7 @@ const PropertyInformation = ({ property }) => {
   const thumbnails = visibleThumbnails.map((item, index) => (
     <img
       key={index + thumbnailStart}
-      className="m-2"
+      className={`m-2 ${activeIndex === index + thumbnailStart ? 'selected' : ''}`}
       src={item.props.src}
       onClick={() => handleThumbnailClick(index + thumbnailStart)}
       style={{
@@ -105,11 +106,8 @@ const PropertyInformation = ({ property }) => {
         width: "100px",
         objectFit: "cover",
         cursor: "pointer",
-        marginRight: "10px",
-        border:
-          activeIndex === index + thumbnailStart
-            ? "2px solid black"
-            : "2px solid transparent",
+        marginRight: "20px",
+        marginTop: "30px", marginLeft: "20px"
       }}
       alt={`Thumbnail ${index + 1}`}
     />
@@ -144,7 +142,7 @@ const PropertyInformation = ({ property }) => {
   return (
     <>
       <ToastContainer />
-      <Container className="my-4">
+      <Container className="responsive">
         <Row className="mb-4">
           <Col>
             <h1 className="text-center">{property.title}</h1>
@@ -152,8 +150,8 @@ const PropertyInformation = ({ property }) => {
           </Col>
         </Row>
 
-        <Row className="mb-4">
-          <Col md={6} className="mb-3">
+        <Row className="mb-3"  >
+          <Col xs={12} md={6} className="mb-3"  style={{ paddingRight: "20px"}}>
             <AliceCarousel
               ref={carouselRef}
               mouseTracking
@@ -162,30 +160,14 @@ const PropertyInformation = ({ property }) => {
               disableDotsControls
               onSlideChanged={(e) => setActiveIndex(e.item)}
             />
-            <div className="d-flex justify-content-center m-3">
-              <Button
-                variant="outline-secondary"
-                onClick={handlePrevThumbnails}
-                disabled={thumbnailStart === 0}
-              >
-                {"<"}
-              </Button>
+            <div className="d-flex justify-content-center m-3" >
               {thumbnails}
-              <Button
-                variant="outline-secondary"
-                onClick={handleNextThumbnails}
-                disabled={thumbnailStart + thumbnailLimit >= items.length}
-              >
-                {">"}
-              </Button>
             </div>
           </Col>
 
-          <Col md={6} className="mb-3">
-            <ul className="list-unstyled">
-              <li>
-                <strong>Provincia:</strong> {property.province}
-              </li>
+          <Col xs={12} md={6} className="mb-3" style={{ paddingLeft: "50px" }}>
+            <ul className="listado">
+              
               <li>
                 <strong>Región:</strong> {property.region}
               </li>
@@ -194,16 +176,16 @@ const PropertyInformation = ({ property }) => {
               </li>
               {property.salePrice ? (
                 <li>
-                  <strong>Precio venta:</strong> {property.salePrice} USD
+                  <strong>Precio venta: </strong> ${property.salePrice} USD
                 </li>
               ) : (
                 <li>
-                  <strong>Precio renta:</strong> {property.rentPrice} USD
+                  <strong>Precio renta: </strong> ${property.rentPrice} USD
                 </li>
               )}
             </ul>
 
-            <Card className="mx-auto" style={{ maxWidth: "100%" }}>
+            <Card className="mx-auto" style={{ maxWidth: "400px" }}>
               <Card.Body>
                 <Card.Title>Contactar un agente hoy</Card.Title>
                 <Form onSubmit={handleSubmit}>
@@ -248,14 +230,15 @@ const PropertyInformation = ({ property }) => {
         </Row>
 
         <Row className="mt-4">
-          <Col xs={12}>
+          <Col xs={12} md={6}>
             <h4>Descripción</h4>
-            <p>{property.description}</p>
+            <p style={{ whiteSpace: 'pre-line' }}>{property.description}</p>
+
           </Col>
         </Row>
 
         <Row className="mt-4">
-          <Col className="d-flex justify-content-between">
+          <Col className="d-flex justify-content-between" >
             <Button variant="secondary">Regresar</Button>
             <Button variant="primary" onClick={handleFavorite}>
               {favorite ? (

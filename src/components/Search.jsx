@@ -9,9 +9,9 @@ const PropertySearch = ({ toPropertyResults }) => {
   const [propertyType, setPropertyType] = useState('Todos');
   const [region, setRegion] = useState('Todos');
   const [minSize, setMinSize] = useState('1');
-  const [maxSize, setMaxSize] = useState('99999');
+  const [maxSize, setMaxSize] = useState('9999999');
   const [minPrice, setMinPrice] = useState('1');
-  const [maxPrice, setMaxPrice] = useState('99999');
+  const [maxPrice, setMaxPrice] = useState('9999999');
   const [purpose, setPurpose] = useState('Comprar');
   const [loading, setLoading] = useState(false);
 
@@ -117,7 +117,7 @@ const PropertySearch = ({ toPropertyResults }) => {
   return (
     <>
     <ToastContainer/>
-    <Container className="pt-5 mt-5" style={{ maxWidth: '650px' }}>
+    <Container className="pt-5 mt-5" style={{ maxWidth: '650px', marginBottom: "50px" }}>
       <h2 className="text-center mb-4">{texts[language].title}</h2>
       <Form onSubmit={handleSearch}>
         <Form.Group as={Row} className="mb-3">

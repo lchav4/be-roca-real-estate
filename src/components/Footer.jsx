@@ -9,13 +9,13 @@ const Footer = () => {
   const texts = {
     es: {
       name: 'Lic. Danny Alfaro Trejos',
-      phone: 'Teléfono de empresa: (+506) 6451-6553',
-      email: 'Email: recostaricarealty@gmail.com',
+      phone: 'Teléfono de empresa: (+506) 8451-6553',
+      email: 'Email: rocarealestatecr@gmail.com',
     },
     en: {
       name: 'Lic. Danny Alfaro Trejos',
-      phone: 'Company phone: (+506) 6451-6553',
-      email: 'Email: recostaricarealty@gmail.com',
+      phone: 'Company phone: (+506) 8451-6553',
+      email: 'Email: rocarealestatecr@gmail.com',
     },
   };
 

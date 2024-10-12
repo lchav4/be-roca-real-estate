@@ -8,6 +8,7 @@ const Header = ({ onNavigate }) => {
   const { toggleLanguage, language } = useLanguage();
   const [userInfo, setUserInfo] = useState(null);
   const { auth, logout } = useAuth();
+  const [expanded, setExpanded] = useState(false); // Track if navbar is expanded
 
   useEffect(() => {
     if (auth) {
@@ -37,9 +38,14 @@ const Header = ({ onNavigate }) => {
     },
   };
 
+  const handleNavigate = (page) => {
+    onNavigate(page);
+    setExpanded(false); // Collapse menu after click
+  };
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
-      <Navbar.Brand onClick={() => onNavigate('home')}>
+    <Navbar bg="dark" variant="dark" expand="lg" expanded={expanded}>
+      <Navbar.Brand onClick={() => handleNavigate('home')}>
         <img
           src={'/roca-real-logo.png'}
           width="30"
@@ -48,17 +54,17 @@ const Header = ({ onNavigate }) => {
           alt="Logo"
         />
       </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="me-auto">
           {userInfo && (
             <>
-              <Nav.Link onClick={() => onNavigate('home')}>{texts[language].home}</Nav.Link>
-              <Nav.Link onClick={() => onNavigate('search')}>{texts[language].search}</Nav.Link>
-              
+              <Nav.Link onClick={() => handleNavigate('home')}>{texts[language].home}</Nav.Link>
+              <Nav.Link onClick={() => handleNavigate('search')}>{texts[language].search}</Nav.Link>
+
               {/* Show Admin link if the user is an admin */}
               {userInfo.role === 'ADMIN' && (
-                <Nav.Link onClick={() => onNavigate('admin')}>{texts[language].admin}</Nav.Link>
+                <Nav.Link onClick={() => handleNavigate('admin')}>{texts[language].admin}</Nav.Link>
               )}
             </>
           )}
@@ -68,7 +74,9 @@ const Header = ({ onNavigate }) => {
           {userInfo && (
             <>
               {/* Show Profile for any logged-in user */}
-              <Nav.Link onClick={() => onNavigate('profile')}>{texts[language].profile}: {userInfo.username}</Nav.Link> 
+              <Nav.Link onClick={() => handleNavigate('profile')}>
+                {texts[language].profile}: {userInfo.username}
+              </Nav.Link>
               <Nav.Link onClick={logout}>{texts[language].logout}</Nav.Link>
             </>
           )}
@@ -77,4 +85,5 @@ const Header = ({ onNavigate }) => {
     </Navbar>
   );
 };
+
 export default Header;

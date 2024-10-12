@@ -11,7 +11,7 @@ const PropertyResults = ({ properties, onNavigate }) => {
   };
 
   return (
-    <Row className="justify-content-center">
+    <Row className="justify-content-center" style={{ marginBottom: "50px", marginTop: "30px", marginLeft: "20px", marginRight: "20px" }}>
       {properties.map((property) => {
         const imageUrl = `/uploads/${property.title}_0.jpg`;
 
@@ -32,7 +32,6 @@ const PropertyResults = ({ properties, onNavigate }) => {
                       {property.title}
                     </Card.Title>
                     <Card.Text style={{ marginBottom: '15px', color: '#555' }}>
-                      <strong>Provincia: {property.province}</strong><br />
                       <strong>Region: {property.region}</strong><br />
                       <strong>Ubicación:</strong> {property.location}<br />
                       <strong>Tipo:</strong> {property.propertyType}<br />
