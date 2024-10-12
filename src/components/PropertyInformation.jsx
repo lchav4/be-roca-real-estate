@@ -176,7 +176,21 @@ const PropertyInformation = ({ property }) => {
               onSlideChanged={(e) => setActiveIndex(e.item)}
             />
             <div className="d-flex justify-content-center m-3" >
+            <Button
+                variant="outline-secondary"
+                onClick={() => thumbnailStart > 0 && setThumbnailStart(thumbnailStart - 1)}
+                disabled={thumbnailStart === 0}
+              >
+                {"<"}
+              </Button>
               {thumbnails}
+              <Button
+                variant="outline-secondary"
+                onClick={() => thumbnailStart + 5 < items.length && setThumbnailStart(thumbnailStart + 1)}
+                disabled={thumbnailStart + 5 >= items.length}
+              >
+                {">"}
+              </Button>
             </div>
           </Col>
 
