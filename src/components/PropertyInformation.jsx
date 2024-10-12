@@ -1,70 +1,125 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import AliceCarousel from "react-alice-carousel";
 import "react-alice-carousel/lib/alice-carousel.css";
-import "./Profile.css";
-import { FaHeart } from "react-icons/fa";
-import { FaRegHeart } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "./AuthProvider";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
+import { useLanguage } from '../app/LanguageContext'; // Importa el contexto de idioma
 
 const PropertyInformation = ({ property }) => {
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactMessage, setContactMessage] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [thumbnailStart, setThumbnailStart] = useState(0); // Índice de la primera miniatura visible
+  const [thumbnailStart, setThumbnailStart] = useState(0);
   const [favorite, setFavorite] = useState(false);
   const carouselRef = useRef(null);
-
-  const thumbnailLimit = 5; // Límite de miniaturas a mostrar
   const { auth } = useAuth();
+  const { language } = useLanguage(); // Usar el idioma actual
 
-  if (!property) {
-    return <p>No hay información de la propiedad disponible.</p>;
-  }
+  const texts = {
+    es: {
+      title: 'Título de la propiedad:',
+      location: 'Ubicación:',
+      province: 'Provincia:',
+      region: 'Región:',
+      landSize: 'Terreno:',
+      salePrice: 'Precio venta:',
+      rentPrice: 'Precio renta:',
+      contactAgent: 'Contactar un agente hoy',
+      fullName: 'Nombre completo',
+      enterName: 'Ingrese su nombre',
+      email: 'Correo electrónico',
+      enterEmail: 'Ingrese su correo',
+      message: 'Comentarios',
+      enterMessage: 'Escriba su mensaje',
+      interestedProperty: 'Me interesa esta propiedad',
+      description: 'Descripción',
+      saveFavorites: 'Guardar en favoritos',
+      savedFavorites: 'Guardado en favoritos',
+      back: 'Regresar'
+    },
+    en: {
+      title: 'Property Title:',
+      location: 'Location:',
+      province: 'Province:',
+      region: 'Region:',
+      landSize: 'Land Size:',
+      salePrice: 'Sale Price:',
+      rentPrice: 'Rent Price:',
+      contactAgent: 'Contact an agent today',
+      fullName: 'Full Name',
+      enterName: 'Enter your name',
+      email: 'Email',
+      enterEmail: 'Enter your email',
+      message: 'Comments',
+      enterMessage: 'Write your message',
+      interestedProperty: 'I am interested in this property',
+      description: 'Description',
+      saveFavorites: 'Save to favorites',
+      savedFavorites: 'Saved to favorites',
+      back: 'Back'
+    }
+  };
 
   useEffect(() => {
     const decodedToken = jwtDecode(auth);
     const email = decodedToken.email;
     fetch("/api/allFavorites", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     }).then(async (response) => {
       if (response.status === 200) {
         const favorites = await response.json();
         setFavorite(favorites.includes(property._id));
       } else {
-        console.error("Ha ocurrido un error al cargar los favoritos");
+        console.error("Error loading favorites");
       }
     });
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const message = `Hola, me interesa la propiedad: ${property.title}.\nMi nombre es ${contactName}.\nPuedes contactarme al email: ${contactEmail}.\n Comentarios: ${contactMessage}`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/50684613257?text=${encodedMessage}`;
-
     window.open(whatsappUrl, "_blank");
-
     setContactName("");
     setContactEmail("");
     setContactMessage("");
   };
 
-  const handleDragStart = (e) => e.preventDefault();
+  const handleFavorite = async (e) => {
+    e.preventDefault();
+    try {
+      const decodedToken = jwtDecode(auth);
+      const email = decodedToken.email;
+      const response = await fetch("/api/favorite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ propertyTitle: property.title, email, isAdding: !favorite }),
+      });
 
+      if (response.status === 200) {
+        setFavorite(!favorite);
+      } else {
+        throw new Error("Error saving favorite");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleDragStart = (e) => e.preventDefault();
   const items = property.imagesURL.map((imageURL, index) => (
     <img
       src={imageURL}
       style={{ height: "600px", objectFit: "cover", width: "100%" }}
-      alt={`Imagen ${index + 1}`}
+      alt={`Image ${index + 1}`}
       onDragStart={handleDragStart}
     />
   ));
@@ -76,24 +131,7 @@ const PropertyInformation = ({ property }) => {
     }
   };
 
-  // Mostrar solo las miniaturas dentro del límite
-  const visibleThumbnails = items.slice(
-    thumbnailStart,
-    thumbnailStart + thumbnailLimit
-  );
-
-  const handleNextThumbnails = () => {
-    if (thumbnailStart + thumbnailLimit < items.length) {
-      setThumbnailStart(thumbnailStart + 1); // Avanza un índice
-    }
-  };
-
-  const handlePrevThumbnails = () => {
-    if (thumbnailStart > 0) {
-      setThumbnailStart(thumbnailStart - 1); // Retrocede un índice
-    }
-  };
-
+  const visibleThumbnails = items.slice(thumbnailStart, thumbnailStart + 5);
   const thumbnails = visibleThumbnails.map((item, index) => (
     <img
       key={index + thumbnailStart}
@@ -106,40 +144,13 @@ const PropertyInformation = ({ property }) => {
         objectFit: "cover",
         cursor: "pointer",
         marginRight: "10px",
-        border:
-          activeIndex === index + thumbnailStart
-            ? "2px solid black"
-            : "2px solid transparent",
+        border: activeIndex === index + thumbnailStart
+          ? "2px solid black"
+          : "2px solid transparent",
       }}
       alt={`Thumbnail ${index + 1}`}
     />
   ));
-
-  const handleFavorite = async (e) => {
-    e.preventDefault();
-    try {
-      const decodedToken = jwtDecode(auth);
-      const email = decodedToken.email;
-
-      const response = await fetch("/api/favorite", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ propertyTitle: property.title, email, isAdding: !favorite }),
-      });
-
-      if (response.status === 200) {
-        setFavorite(!favorite);
-      } else {
-        throw new Error("Ha ocurrido un error al guardar");
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  
 
   return (
     <>
@@ -148,7 +159,7 @@ const PropertyInformation = ({ property }) => {
         <Row className="mb-4">
           <Col>
             <h1 className="text-center">{property.title}</h1>
-            <h5 className="text-center text-muted">{property.location}</h5>
+            <h5 className="text-center text-muted">{texts[language].location} {property.location}</h5>
           </Col>
         </Row>
 
@@ -165,7 +176,7 @@ const PropertyInformation = ({ property }) => {
             <div className="d-flex justify-content-center m-3">
               <Button
                 variant="outline-secondary"
-                onClick={handlePrevThumbnails}
+                onClick={() => thumbnailStart > 0 && setThumbnailStart(thumbnailStart - 1)}
                 disabled={thumbnailStart === 0}
               >
                 {"<"}
@@ -173,8 +184,8 @@ const PropertyInformation = ({ property }) => {
               {thumbnails}
               <Button
                 variant="outline-secondary"
-                onClick={handleNextThumbnails}
-                disabled={thumbnailStart + thumbnailLimit >= items.length}
+                onClick={() => thumbnailStart + 5 < items.length && setThumbnailStart(thumbnailStart + 1)}
+                disabled={thumbnailStart + 5 >= items.length}
               >
                 {">"}
               </Button>
@@ -184,92 +195,82 @@ const PropertyInformation = ({ property }) => {
           <Col md={6} className="mb-3">
             <ul className="list-unstyled">
               <li>
-                <strong>Provincia:</strong> {property.province}
+                <strong>{texts[language].region}</strong> {property.region}
               </li>
               <li>
-                <strong>Región:</strong> {property.region}
-              </li>
-              <li>
-                <strong>Terreno:</strong> {property.landSize} m²
+                <strong>{texts[language].landSize}</strong> {property.landSize} m²
               </li>
               {property.salePrice ? (
                 <li>
-                  <strong>Precio venta:</strong> {property.salePrice} USD
+                  <strong>{texts[language].salePrice}</strong> {property.salePrice} USD
                 </li>
               ) : (
                 <li>
-                  <strong>Precio renta:</strong> {property.rentPrice} USD
+                  <strong>{texts[language].rentPrice}</strong> {property.rentPrice} USD
                 </li>
               )}
             </ul>
 
             <Card className="mx-auto" style={{ maxWidth: "100%" }}>
               <Card.Body>
-                <Card.Title>Contactar un agente hoy</Card.Title>
+                <Card.Title>{texts[language].contactAgent}</Card.Title>
                 <Form onSubmit={handleSubmit}>
                   <Form.Group controlId="contactName" className="mb-3">
-                    <Form.Label>Nombre completo</Form.Label>
+                    <Form.Label>{texts[language].fullName}</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Ingrese su nombre"
+                      placeholder={texts[language].enterName}
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
                     />
                   </Form.Group>
 
                   <Form.Group controlId="contactEmail" className="mb-3">
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label>{texts[language].email}</Form.Label>
                     <Form.Control
                       type="email"
-                      placeholder="Ingrese su email"
+                      placeholder={texts[language].enterEmail}
                       value={contactEmail}
                       onChange={(e) => setContactEmail(e.target.value)}
                     />
                   </Form.Group>
 
                   <Form.Group controlId="contactMessage" className="mb-3">
-                    <Form.Label>Comentarios</Form.Label>
+                    <Form.Label>{texts[language].message}</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="Escriba su mensaje"
+                      placeholder={texts[language].enterMessage}
                       value={contactMessage}
                       onChange={(e) => setContactMessage(e.target.value)}
                     />
                   </Form.Group>
-
                   <Button variant="primary" type="submit">
-                    Me interesa esta propiedad
+                    {texts[language].interestedProperty}
                   </Button>
-                </Form>
+                  </Form>
               </Card.Body>
             </Card>
+            <div className="mt-4">
+              <Button
+                variant="outline-primary"
+                onClick={handleFavorite}
+                className="me-2"
+              >
+                {favorite ? <FaHeart /> : <FaRegHeart />}
+                {favorite ? ` ${texts[language].savedFavorites}` : ` ${texts[language].saveFavorites}`}
+              </Button>
+              <Button variant="secondary" onClick={() => window.history.back()}>
+                {texts[language].back}
+              </Button>
+            </div>
           </Col>
         </Row>
 
-        <Row className="mt-4">
-          <Col xs={12}>
-            <h4>Descripción</h4>
+        <Row className="mb-4">
+          <Col>
+            <h3>{texts[language].description}</h3>
             <p>{property.description}</p>
-          </Col>
-        </Row>
-
-        <Row className="mt-4">
-          <Col className="d-flex justify-content-between">
-            <Button variant="secondary">Regresar</Button>
-            <Button variant="primary" onClick={handleFavorite}>
-              {favorite ? (
-                <>
-                  Guardado en favoritos
-                  <FaHeart className="m-1" />
-                </>
-              ) : (
-                <>
-                  Guardar en favoritos
-                  <FaRegHeart className="m-1" />
-                </>
-              )}
-            </Button>
           </Col>
         </Row>
       </Container>
@@ -278,3 +279,11 @@ const PropertyInformation = ({ property }) => {
 };
 
 export default PropertyInformation;
+
+
+
+
+
+
+
+

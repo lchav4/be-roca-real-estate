@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaPen } from "react-icons/fa";
+import { useLanguage } from '../app/LanguageContext';
 import "./Profile.css";
 
 const Profile = ({ user }) => {
@@ -13,6 +14,29 @@ const Profile = ({ user }) => {
     email: user.email,
     name: user.username,
   });
+
+  const { language } = useLanguage();
+
+  const texts = {
+    es: {
+      profile: 'Perfil',
+      email: 'Correo electrónico:',
+      name: 'Nombre:',
+      updateSuccess: 'Perfil actualizado correctamente!',
+      noChanges: 'Ningún campo ha sido modificado.',
+      updateProfile: 'Actualizar Perfil',
+      errorUpdate: 'Error al actualizar el perfil',
+    },
+    en: {
+      profile: 'Profile',
+      email: 'Email:',
+      name: 'Name:',
+      updateSuccess: 'Profile updated successfully!',
+      noChanges: 'No fields have been modified.',
+      updateProfile: 'Update Profile',
+      errorUpdate: 'Error updating profile',
+    },
+  };
 
   const handleEditClick = (field) => {
     setIsEditing((prev) => ({
@@ -34,7 +58,7 @@ const Profile = ({ user }) => {
       updatedUser.email === user.email &&
       updatedUser.name === user.username
     ) {
-      toast.info("Ningún campo ha sido modificado.");
+      toast.info(texts[language].noChanges);
       return;
     }
 
@@ -54,10 +78,10 @@ const Profile = ({ user }) => {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Perfil actualizado correctamente!");
+        toast.success(texts[language].updateSuccess);
         setIsEditing({ email: false, name: false });
       } else {
-        throw new Error(data.error || "Error al actualizar el perfil");
+        throw new Error(data.error || texts[language].errorUpdate);
       }
     } catch (error) {
       toast.error(error.message);
@@ -68,10 +92,10 @@ const Profile = ({ user }) => {
     <div className="profile-container">
       <ToastContainer />
       <div className="profile">
-        <h1>Perfil</h1>
+        <h1>{texts[language].profile}</h1>
 
         <div className="profile-field">
-          <label>Email:</label>
+          <label>{texts[language].email}</label>
           <input
             type="email"
             name="email"
@@ -87,7 +111,7 @@ const Profile = ({ user }) => {
         </div>
 
         <div className="profile-field">
-          <label>Nombre:</label>
+          <label>{texts[language].name}</label>
           <input
             type="text"
             name="name"
@@ -104,7 +128,7 @@ const Profile = ({ user }) => {
 
         {(isEditing.email || isEditing.name) && (
           <button className="save-button" onClick={handleSave}>
-            Actualizar Perfil
+            {texts[language].updateProfile}
           </button>
         )}
       </div>

@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Container, Form, Button, Card, InputGroup } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { useLanguage } from "../app/LanguageContext";
+import { useLanguage } from "../app/LanguageContext"; 
 
 const ResetPassword = ({ onBacktoLogin }) => {
   const [newPassword, setNewPassword] = useState("");
@@ -13,7 +14,7 @@ const ResetPassword = ({ onBacktoLogin }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [token, setToken] = useState("");
   const router = useRouter();
-  const { language } = useLanguage();
+  const { language } = useLanguage(); 
 
   const texts = {
     es: {
@@ -35,7 +36,7 @@ const ResetPassword = ({ onBacktoLogin }) => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setToken(params.get("token"));
-  }, []);
+  }, []); 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -51,17 +52,17 @@ const ResetPassword = ({ onBacktoLogin }) => {
         });
 
         if (response.status === 200) {
-          toast.success("Contraseña actualizada correctamente");
+          toast.success(language === 'es' ? "Contraseña actualizada correctamente" : "Password updated successfully");
           router.push("/main");
         } else {
           const data = await response.json();
           throw new Error(data.error || 'Error desconocido'); 
         }
       } else {
-        toast.error("Las contraseñas no coinciden");
+        toast.error(language === 'es' ? "Las contraseñas no coinciden" : "Passwords do not match");
       }
     } catch (error) {
-      toast.error(`Error: ${error.message || 'Error al restablecer la contraseña'}`); 
+      toast.error(`Error: ${error.message || (language === 'es' ? 'Error al restablecer la contraseña' : 'Error resetting password')}`); 
     }
   };
 

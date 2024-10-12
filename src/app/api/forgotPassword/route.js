@@ -7,6 +7,7 @@ export const POST = async (req) => {
     try {
         const body = await req.json();
         const email = body.email; 
+        const language=body.actualLanguage;
         
         const existingUser = await findUser(email);
         
@@ -17,7 +18,7 @@ export const POST = async (req) => {
         const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '10m' });
         const resetLink = `http://localhost:3000/reset-password?token=${token}`;
 
-        await sendEmail(email, resetLink);
+        await sendEmail(email, resetLink,language);
 
         return NextResponse.json({ message: 'Se ha enviado un correo para restablecer la contraseña' }, { status: 200 });
     } catch (error) {

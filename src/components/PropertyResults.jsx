@@ -1,13 +1,39 @@
 import React from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
+import { useLanguage } from '../app/LanguageContext';
 
-const PropertyResults = ({ properties, onNavigate }) => { 
+const PropertyResults = ({ properties, onNavigate }) => {
+  const { language } = useLanguage();
+
+  const texts = {
+    es: {
+      noResults: 'No se encontraron propiedades.',
+      moreInfo: 'Más Información',
+      province: 'Provincia:',
+      region: 'Región:',
+      location: 'Ubicación:',
+      type: 'Tipo:',
+    },
+    en: {
+      noResults: 'No properties were found.',
+      moreInfo: 'More Information',
+      province: 'Province:',
+      region: 'Region:',
+      location: 'Location:',
+      type: 'Type:',
+    },
+  };
+
   if (properties.length === 0) {
-    return <p>No se encontraron propiedades que coincidan con los criterios de búsqueda.</p>;
+    return (
+      <div style={{ textAlign: 'center', margin: '100px 0' }}>
+        <p>{texts[language].noResults}</p>
+      </div>
+    );
   }
 
   const handleMoreInfo = (property) => {
-    onNavigate('propertyInformation', property); 
+    onNavigate('propertyInformation', property);
   };
 
   return (
@@ -32,17 +58,16 @@ const PropertyResults = ({ properties, onNavigate }) => {
                       {property.title}
                     </Card.Title>
                     <Card.Text style={{ marginBottom: '15px', color: '#555' }}>
-                      <strong>Provincia: {property.province}</strong><br />
-                      <strong>Region: {property.region}</strong><br />
-                      <strong>Ubicación:</strong> {property.location}<br />
-                      <strong>Tipo:</strong> {property.propertyType}<br />
+                      <strong>{texts[language].region} {property.region}</strong><br />
+                      <strong>{texts[language].location}</strong> {property.location}<br />
+                      <strong>{texts[language].type}</strong> {property.propertyType}<br />
                     </Card.Text>
                     <Button 
                       variant="primary" 
                       style={{ marginTop: 'auto' }}
                       onClick={() => handleMoreInfo(property)} 
                     >
-                      Más Información
+                      {texts[language].moreInfo}
                     </Button>
                   </Card.Body>
                 </Col>
