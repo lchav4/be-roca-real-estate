@@ -15,6 +15,7 @@ const PropertyInformation = ({ property }) => {
   const [contactMessage, setContactMessage] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [thumbnailStart, setThumbnailStart] = useState(0);
+  const [thumbnailsToShow, setThumbnailsToShow] = useState(3);
   const [favorite, setFavorite] = useState(false);
   const carouselRef = useRef(null);
   const { auth } = useAuth();
@@ -133,7 +134,7 @@ const PropertyInformation = ({ property }) => {
   };
   
 
-  const visibleThumbnails = items.slice(thumbnailStart, thumbnailStart + 5);
+  const visibleThumbnails = items.slice(thumbnailStart, thumbnailStart + thumbnailsToShow);
   const thumbnails = visibleThumbnails.map((item, index) => (
     <img
       key={index + thumbnailStart}
@@ -153,6 +154,35 @@ const PropertyInformation = ({ property }) => {
       alt={`Thumbnail ${index + 1}`}
     />
   ));
+
+  useEffect(() => {
+    const updateThumbnailsToShow = () => {
+      const width = window.innerWidth;
+
+      if (width < 576) {
+        setThumbnailsToShow(1);
+      } else if (width >= 576 && width < 900) {
+        setThumbnailsToShow(2);
+      } else if (width >= 900 && width < 1200) {
+        setThumbnailsToShow(3);
+      } else if (width >= 1200 && width < 1300) {
+        setThumbnailsToShow(4);
+      } else {
+        setThumbnailsToShow(5);
+      }
+    };
+
+
+    updateThumbnailsToShow();
+
+
+    window.addEventListener("resize", updateThumbnailsToShow);
+
+
+    return () => {
+      window.removeEventListener("resize", updateThumbnailsToShow);
+    };
+  }, []);
 
   return (
     <>
@@ -175,7 +205,7 @@ const PropertyInformation = ({ property }) => {
               disableDotsControls
               onSlideChanged={(e) => setActiveIndex(e.item)}
             />
-            <div className="d-flex justify-content-center m-3" >
+            <div className="d-flex justify-content-center ml-5" style={{width: "100%"}} >
             <Button
                 variant="outline-secondary"
                 onClick={() => thumbnailStart > 0 && setThumbnailStart(thumbnailStart - 1)}
@@ -186,8 +216,8 @@ const PropertyInformation = ({ property }) => {
               {thumbnails}
               <Button
                 variant="outline-secondary"
-                onClick={() => thumbnailStart + 5 < items.length && setThumbnailStart(thumbnailStart + 1)}
-                disabled={thumbnailStart + 5 >= items.length}
+                onClick={() => thumbnailStart + thumbnailsToShow < items.length && setThumbnailStart(thumbnailStart + 1)}
+                disabled={thumbnailStart + thumbnailsToShow >= items.length}
               >
                 {">"}
               </Button>
@@ -195,6 +225,7 @@ const PropertyInformation = ({ property }) => {
           </Col>
 
           <Col xs={12} md={6} className="mb-3" style={{ paddingLeft: "50px" }}>
+            <div className="d-flex justify-content-center pr-5" style={{width: "90%"}}>
             <ul className="listado">
             <li>
                 <strong>{texts[language].region}</strong> {property.region} m²
@@ -212,7 +243,7 @@ const PropertyInformation = ({ property }) => {
                 </li>
               )}
             </ul>
-
+            </div>
             <Card className="mx-auto" style={{ maxWidth: "400px" }}>
               <Card.Body>
                 <Card.Title>{texts[language].contactAgent}</Card.Title>
