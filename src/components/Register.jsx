@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useLanguage } from '../app/LanguageContext';
+import { Hourglass } from 'react-loader-spinner';
 
 const Register = ({ onBackToLogin }) => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ const Register = ({ onBackToLogin }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { language } = useLanguage();
 
   const texts = {
@@ -39,6 +41,7 @@ const Register = ({ onBackToLogin }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
     try {
       if (email.length === 0 || name.length === 0 || password.length === 0 || confirmPassword.length === 0) {
         return toast.info('Todos los campos son requeridos');
@@ -46,7 +49,7 @@ const Register = ({ onBackToLogin }) => {
       if (password !== confirmPassword) {
         return toast.error('Las contraseñas no coinciden');
       }
-
+      setLoading(true);
       const response = await fetch('/api/register', { 
         method: 'POST',
         headers: {
@@ -56,6 +59,7 @@ const Register = ({ onBackToLogin }) => {
       });
 
       const data = await response.json();
+      setLoading(false);
       if (response.status === 200) {
         toast.success('Usuario creado correctamente');
         setTimeout(() => {
@@ -65,6 +69,7 @@ const Register = ({ onBackToLogin }) => {
         throw new Error(data.error); 
       }
     } catch (error) {
+      setLoading(false);
       toast.error(error.message || 'Error al crear usuario'); 
     }
   };
@@ -134,7 +139,9 @@ const Register = ({ onBackToLogin }) => {
                 </InputGroup>
               </Form.Group>
               <Button variant="dark" type="submit" className="w-100">
-                {texts[language].continue}
+                {loading ?
+                (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
+                texts[language].continue}
               </Button>
               <div className="text-center mt-3">
                 <Button variant="link" onClick={onBackToLogin}>{texts[language].toLogin}</Button>

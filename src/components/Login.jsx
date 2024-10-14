@@ -116,7 +116,7 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
 
             <Button variant="dark" type="submit" className="w-100 d-flex justify-content-center align-items-center">
               {loading ? 
-              (<Hourglass radius={"5px"} height={30} width={30} />) :
+              (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
               texts[language].continue}
               
             </Button>
