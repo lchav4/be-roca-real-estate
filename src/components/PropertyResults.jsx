@@ -39,7 +39,7 @@ const PropertyResults = ({ properties, onNavigate }) => {
   return (
     <Row className="justify-content-center" style={{ marginBottom: "50px", marginTop: "30px", marginLeft: "20px", marginRight: "20px" }}>
       {properties.map((property) => {
-        const imageUrl = `/uploads/${property.title}_0.jpg`;
+        const imageUrl = `/uploads/${property._id.toString()}_0.jpg`;
 
         return (
           <Col key={property.id} md={10} lg={10} className="mb-4 d-flex justify-content-center">

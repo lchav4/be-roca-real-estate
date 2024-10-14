@@ -48,7 +48,6 @@ export const saveProperty = async (propertyData) => {
     salePrice: propertyData.forSale === 'true' ? propertyData.salePrice : "",
     rentPrice: propertyData.forRent === 'true' ? propertyData.rentPrice : "",
     createdAt: new Date(),
-    imagesURL: propertyData.images.map((image, index) => `uploads/${propertyData.title}_${index}.jpg`),
   };
 
   const propertyExists = await collection.findOne({ title: newProperty.title });
@@ -58,6 +57,11 @@ export const saveProperty = async (propertyData) => {
   }
 
   await collection.insertOne(newProperty);
+  const property = await collection.findOne({ title: newProperty.title });
+  await collection.updateOne(
+    { title: newProperty.title },
+    { $set: { imagesURL: propertyData.images.map((_, index) => `uploads/${property._id.toString()}_${index}.jpg`) } }
+  );
 
   const images = propertyData.images;
   let imagePaths = [];
@@ -65,7 +69,7 @@ export const saveProperty = async (propertyData) => {
     const image = images[i];
     const imageBuffer = await image.arrayBuffer();
     const buffer = Buffer.from(imageBuffer);
-    const imagePath = `public/uploads/${propertyData.title}_${i}.jpg`;
+    const imagePath = `public/uploads/${property._id.toString()}_${i}.jpg`;
     await fs.writeFile(imagePath, buffer);
     imagePaths = [...imagePaths, imagePath];
   }
