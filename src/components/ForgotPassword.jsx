@@ -3,9 +3,11 @@ import { Container, Form, Button, Card } from 'react-bootstrap';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLanguage } from '../app/LanguageContext';
+import { Hourglass } from 'react-loader-spinner';
 
 const ForgotPassword = ({ onBackToLogin }) => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   const { language } = useLanguage();
 
   const texts = {
@@ -28,6 +30,7 @@ const ForgotPassword = ({ onBackToLogin }) => {
 
     const actualLanguage=language;
     try {
+      setLoading(true);
       if (email.length === 0) throw new Error('Email is required');
 
       const response = await fetch('/api/forgotPassword', { 
@@ -39,12 +42,14 @@ const ForgotPassword = ({ onBackToLogin }) => {
       });
 
       const data = await response.json();
+      setLoading(false);
       if (response.status === 200) {
         toast.success('An email has been sent to reset your password');
       } else {
         throw new Error(data.error); 
       }
     } catch (error) {
+      setLoading(false);
       toast.error(error.message); 
     }
   };
@@ -74,7 +79,9 @@ const ForgotPassword = ({ onBackToLogin }) => {
               />
             </Form.Group>
             <Button variant="dark" type="submit" className="w-100">
-              {texts[language].sendLink}
+              {loading ?
+              (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
+              texts[language].sendLink}
             </Button>
           </Form>
           <div className="text-center mt-3">

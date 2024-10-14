@@ -152,14 +152,14 @@ const PropertySearch = ({ toPropertyResults }) => {
             <Form.Control 
               type="text" // Cambiamos a tipo texto para formatear con comas
               value={minSize}
-              onChange={(e) => setMinSize(formatNumberWithCommas(e.target.value))} 
+              onChange={(e) => setMinSize(e.target.value)} 
             />
           </Col>
           <Col sm={3}>
             <Form.Control 
               type="text" // Cambiamos a tipo texto para formatear con comas
               value={maxSize}
-              onChange={(e) => setMaxSize(formatNumberWithCommas(e.target.value))} 
+              onChange={(e) => setMaxSize(e.target.value)} 
             />
           </Col>
         </Form.Group>

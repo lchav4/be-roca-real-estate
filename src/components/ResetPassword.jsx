@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "../app/LanguageContext"; 
+import { Hourglass } from 'react-loader-spinner';
 
 const ResetPassword = ({ onBacktoLogin }) => {
   const [newPassword, setNewPassword] = useState("");
@@ -13,6 +14,7 @@ const ResetPassword = ({ onBacktoLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [token, setToken] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { language } = useLanguage(); 
 
@@ -42,6 +44,7 @@ const ResetPassword = ({ onBacktoLogin }) => {
     event.preventDefault();
 
     try {
+      setLoading(true);
       if (newPassword === confirmPassword) {
         const response = await fetch("/api/resetPassword", {
           method: "POST",
@@ -52,6 +55,7 @@ const ResetPassword = ({ onBacktoLogin }) => {
         });
 
         if (response.status === 200) {
+          setLoading(false);
           toast.success(language === 'es' ? "Contraseña actualizada correctamente" : "Password updated successfully");
           router.push("/main");
         } else {
@@ -59,9 +63,11 @@ const ResetPassword = ({ onBacktoLogin }) => {
           throw new Error(data.error || 'Error desconocido'); 
         }
       } else {
+        setLoading(false);
         toast.error(language === 'es' ? "Las contraseñas no coinciden" : "Passwords do not match");
       }
     } catch (error) {
+      setLoading(false);
       toast.error(`Error: ${error.message || (language === 'es' ? 'Error al restablecer la contraseña' : 'Error resetting password')}`); 
     }
   };
@@ -122,7 +128,9 @@ const ResetPassword = ({ onBacktoLogin }) => {
                 </InputGroup>
               </Form.Group>
               <Button variant="dark" type="submit" className="w-100">
-                {texts[language].reset}
+                {loading ?
+                (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
+                texts[language].reset}
               </Button>
             </Form>
           </Card.Body>
