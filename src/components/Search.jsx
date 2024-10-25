@@ -74,10 +74,10 @@ const PropertySearch = ({ toPropertyResults }) => {
     "Zona Pacífico Sur"
   ];
 
-  // Función para formatear los números con comas
+
   const formatNumberWithCommas = (value) => {
-    const numberWithoutCommas = value.replace(/,/g, ''); // Remover comas anteriores
-    return numberWithoutCommas.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Agregar comas
+    const numberWithoutCommas = value.replace(/,/g, ''); 
+    return numberWithoutCommas.replace(/\B(?=(\d{3})+(?!\d))/g, ','); 
   };
 
   const handleSearch = async (e) => {

@@ -20,7 +20,7 @@ const MainApp = () => {
   const [currentPage, setCurrentPage] = useState('login');
   const [userInfo, setUserInfo] = useState(null); 
   const [filteredProperties, setFilteredProperties] = useState([]); 
-  const [selectedProperty, setSelectedProperty] = useState(null); // Para almacenar la propiedad seleccionada
+  const [selectedProperty, setSelectedProperty] = useState(null); 
 
   useEffect(() => {
     if (auth) {
@@ -51,7 +51,7 @@ const MainApp = () => {
   const handleNavigation = (page, property = null) => {
     setCurrentPage(page);
     if (property) {
-      setSelectedProperty(property); // Guardamos la propiedad seleccionada
+      setSelectedProperty(property); 
     }
   };
 
@@ -92,7 +92,7 @@ const MainApp = () => {
       ) : currentPage === 'profile' ? (
         <>
           <Header onNavigate={handleNavigation} />
-          <Profile user={userInfo} />
+          <Profile user={userInfo} toPropertyResults={toPropertyResults}/>
           <Footer />
         </>
       ) : currentPage === 'home' ? (

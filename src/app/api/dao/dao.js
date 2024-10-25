@@ -2,7 +2,6 @@ import { ObjectId } from "mongodb";
 import { connectDB, db } from "../../database/db";
 import bcrypt from "bcryptjs";
 import fs from "fs/promises";
-import { title } from "process";
 
 const saltRounds = 10;
 
@@ -211,3 +210,32 @@ export const getFavorites = async (email) => {
   const favorites = user.favorites;
   return favorites;
 }
+
+
+export const getUserFavorites = async (email) => {
+  const favoriteIds = await getFavorites(email);
+
+  if (!favoriteIds || favoriteIds.length === 0) {
+    return [];
+  }
+
+  const objectIds = favoriteIds.map(id => new ObjectId(id));
+
+  try {
+    const favoriteProperties = await db.collection("properties").find({
+      _id: { $in: objectIds }
+    }).toArray();
+
+    return favoriteProperties;  
+  } catch (error) {
+    console.error("Error fetching user favorites:", error);
+    return [];
+  }
+};
+
+export const deleteUser = async (email) => {
+  await connectDB();
+  const result = await db.collection('users').deleteOne({ email });
+  return result.deletedCount > 0; 
+};
+
