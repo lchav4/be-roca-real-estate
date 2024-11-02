@@ -42,7 +42,7 @@ const PropertyResults = ({ properties, onNavigate }) => {
         const imageUrl = `/uploads/${property._id.toString()}_0.jpg`;
 
         return (
-          <Col key={property.id} md={10} lg={10} className="mb-4 d-flex justify-content-center">
+            <Col key={property._id} md={10} lg={10} className="mb-4 d-flex justify-content-center">
             <Card style={{ border: '1px solid #ddd', borderRadius: '8px', width: '100%', display: 'flex' }}>
               <Row style={{ width: '100%' }}>
                 <Col xs={12} md={4} className="d-flex justify-content-center">
