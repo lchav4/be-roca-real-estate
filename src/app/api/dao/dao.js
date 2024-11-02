@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import { connectDB, db } from "../../database/db";
 import bcrypt from "bcryptjs";
 import fs from "fs/promises";
@@ -44,8 +45,8 @@ export const saveProperty = async (propertyData) => {
     landSize: propertyData.landSize,
     title: propertyData.title,
     description: propertyData.description,
-    salePrice: propertyData.forSale === 'true' ? propertyData.salePrice : "",
-    rentPrice: propertyData.forRent === 'true' ? propertyData.rentPrice : "",
+    salePrice: propertyData.forSale === "true" ? propertyData.salePrice : "",
+    rentPrice: propertyData.forRent === "true" ? propertyData.rentPrice : "",
     createdAt: new Date(),
   };
 
@@ -59,7 +60,13 @@ export const saveProperty = async (propertyData) => {
   const property = await collection.findOne({ title: newProperty.title });
   await collection.updateOne(
     { title: newProperty.title },
-    { $set: { imagesURL: propertyData.images.map((_, index) => `uploads/${property._id.toString()}_${index}.jpg`) } }
+    {
+      $set: {
+        imagesURL: propertyData.images.map(
+          (_, index) => `uploads/${property._id.toString()}_${index}.jpg`
+        ),
+      },
+    }
   );
 
   const images = propertyData.images;
@@ -154,23 +161,25 @@ export const updateProfile = async (currentEmail, updatedFields) => {
   try {
     await connectDB();
 
-   
     if (updatedFields.email) {
-      const emailExists = await db.collection("users").findOne({ email: updatedFields.email });
+      const emailExists = await db
+        .collection("users")
+        .findOne({ email: updatedFields.email });
       if (emailExists) {
         throw new Error("El nuevo correo electrónico ya está en uso.");
       }
     }
 
-    const result = await db.collection("users").updateOne(
-      { email: currentEmail },  
-      { $set: updatedFields }  
-    );
+    const result = await db
+      .collection("users")
+      .updateOne({ email: currentEmail }, { $set: updatedFields });
 
     if (result.modifiedCount > 0) {
-      return true;  
+      return true;
     } else {
-      throw new Error("No se pudo actualizar el perfil. Es posible que no haya cambios.");
+      throw new Error(
+        "No se pudo actualizar el perfil. Es posible que no haya cambios."
+      );
     }
   } catch (error) {
     throw new Error("Error al actualizar el perfil: " + error.message);
@@ -185,32 +194,31 @@ export const addFavorite = async (email, propertyId, isAdding) => {
     throw new Error("Usuario no encontrado");
   }
 
-  const property = await db.collection("properties").findOne({ title: propertyId });
+  const property = await db
+    .collection("properties")
+    .findOne({ title: propertyId });
 
   const propertyObjectId = property._id.toString();
 
   if (isAdding) {
-    await db.collection("users").updateOne(
-      { email },
-      { $addToSet: { favorites: propertyObjectId } }
-    );
+    await db
+      .collection("users")
+      .updateOne({ email }, { $addToSet: { favorites: propertyObjectId } });
   } else {
-    await db.collection("users").updateOne(
-      { email },
-      { $pull: { favorites: propertyObjectId } }
-    );
+    await db
+      .collection("users")
+      .updateOne({ email }, { $pull: { favorites: propertyObjectId } });
   }
 
   return true;
-}
+};
 
 export const getFavorites = async (email) => {
   await connectDB();
   const user = await db.collection("users").findOne({ email });
   const favorites = user.favorites;
   return favorites;
-}
-
+};
 
 export const getUserFavorites = async (email) => {
   const favoriteIds = await getFavorites(email);
@@ -219,14 +227,17 @@ export const getUserFavorites = async (email) => {
     return [];
   }
 
-  const objectIds = favoriteIds.map(id => new ObjectId(id));
+  const objectIds = favoriteIds.map((id) => new ObjectId(id));
 
   try {
-    const favoriteProperties = await db.collection("properties").find({
-      _id: { $in: objectIds }
-    }).toArray();
+    const favoriteProperties = await db
+      .collection("properties")
+      .find({
+        _id: { $in: objectIds },
+      })
+      .toArray();
 
-    return favoriteProperties;  
+    return favoriteProperties;
   } catch (error) {
     console.error("Error fetching user favorites:", error);
     return [];
@@ -235,7 +246,45 @@ export const getUserFavorites = async (email) => {
 
 export const deleteUser = async (email) => {
   await connectDB();
-  const result = await db.collection('users').deleteOne({ email });
-  return result.deletedCount > 0; 
+  const result = await db.collection("users").deleteOne({ email });
+  return result.deletedCount > 0;
 };
 
+export const deleteProperty = async (propertyId, email) => {
+  try {
+    console.log("ITS WORKING IN DAO");
+    const { db } = await connectDB();
+
+    const user = await db.collection("users").findOne({ email });
+    if (!user || user.role !== "ADMIN") {
+      throw new Error("No tienes permisos para eliminar propiedades");
+    }
+
+    const property = await db.collection("properties").findOne({
+      _id: new ObjectId(propertyId),
+    });
+    if (!property) {
+      throw new Error("Propiedad no encontrada");
+    }
+
+    const result = await db.collection("properties").deleteOne({
+      _id: new ObjectId(propertyId),
+    });
+
+    await db
+      .collection("users")
+      .updateMany(
+        { favorites: propertyId },
+        { $pull: { favorites: propertyId } }
+      );
+
+    if (result.deletedCount === 1) {
+      return true;
+    } else {
+      throw new Error("No se pudo eliminar la propiedad");
+    }
+  } catch (error) {
+    console.error("Error en deleteProperty:", error);
+    throw error;
+  }
+};

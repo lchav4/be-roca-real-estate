@@ -89,7 +89,17 @@ const MainApp = () => {
           <Search toPropertyResults={toPropertyResults} />
           <Footer />
         </>
-      ) : currentPage === 'profile' ? (
+
+
+      ): currentPage === 'deleteProperty' ? (
+        <>
+          <Header onNavigate={handleNavigation} />
+          <PropertyDelete property={selectedProperty} toPropertyResults={toPropertyResults} />
+          <Footer />
+        </>
+      )
+      
+      : currentPage === 'profile' ? (
         <>
           <Header onNavigate={handleNavigation} />
           <Profile user={userInfo} toPropertyResults={toPropertyResults}/>

@@ -8,6 +8,7 @@ import { useAuth } from "./AuthProvider";
 import { jwtDecode } from "jwt-decode";
 import { toast, ToastContainer } from "react-toastify";
 import { useLanguage } from '../app/LanguageContext'; // Importa el contexto de idioma
+import PropertyDeleteButton from './PropertyDelete';
 
 const PropertyInformation = ({ property }) => {
   const [contactName, setContactName] = useState("");
@@ -17,6 +18,7 @@ const PropertyInformation = ({ property }) => {
   const [thumbnailStart, setThumbnailStart] = useState(0);
   const [thumbnailsToShow, setThumbnailsToShow] = useState(3);
   const [favorite, setFavorite] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const carouselRef = useRef(null);
   const { auth } = useAuth();
   const { language } = useLanguage(); // Usar el idioma actual
@@ -41,7 +43,9 @@ const PropertyInformation = ({ property }) => {
       description: 'Descripción',
       saveFavorites: 'Guardar en favoritos',
       savedFavorites: 'Guardado en favoritos',
-      back: 'Regresar'
+      back: 'Regresar',
+      deleteProperty: 'Eliminar propiedad',
+      confirmDelete: '¿Está seguro de que desea eliminar esta propiedad?',
     },
     en: {
       title: 'Property Title:',
@@ -62,9 +66,16 @@ const PropertyInformation = ({ property }) => {
       description: 'Description',
       saveFavorites: 'Save to favorites',
       savedFavorites: 'Saved to favorites',
-      back: 'Back'
+      back: 'Back',
+      deleteProperty: 'Delete Property',
+      confirmDelete: 'Are you sure you want to delete this property?',
     }
   };
+
+ 
+
+ 
+  
 
   useEffect(() => {
     const decodedToken = jwtDecode(auth);
@@ -296,20 +307,25 @@ const PropertyInformation = ({ property }) => {
         </Row>
 
         <Row className="mt-4">
-          <Col className="d-flex justify-content-between" >
-          <Button variant="secondary" onClick={() => window.history.back()}>
-                {texts[language].back}
-          </Button>
-          <Button
-                variant="outline-primary"
-                onClick={handleFavorite}
-                className="me-2"
-              >
-                {favorite ? <FaHeart /> : <FaRegHeart />}
-                {favorite ? ` ${texts[language].savedFavorites}` : ` ${texts[language].saveFavorites}`}
-              </Button>
-          </Col>
-        </Row>
+  <Col className="d-flex justify-content-between" >
+    <Button variant="secondary" onClick={() => window.history.back()}>
+      {texts[language].back}
+    </Button>
+    <div className="d-flex gap-2">
+      <PropertyDeleteButton 
+        property={property}
+        onDelete={() => window.history.back()}
+      />
+      <Button
+        variant="outline-primary"
+        onClick={handleFavorite}
+      >
+        {favorite ? <FaHeart /> : <FaRegHeart />}
+        {favorite ? texts[language].savedFavorites : texts[language].saveFavorites}
+      </Button>
+    </div>
+  </Col>
+</Row>
       </Container>
     </>
   );
