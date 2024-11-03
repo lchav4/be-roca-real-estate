@@ -57,7 +57,9 @@ const ResetPassword = ({ onBacktoLogin }) => {
         if (response.status === 200) {
           setLoading(false);
           toast.success(language === 'es' ? "Contraseña actualizada correctamente" : "Password updated successfully");
-          router.push("/main");
+          setTimeout(() => {
+            router.push("/main");
+          }, 2000);
         } else {
           const data = await response.json();
           throw new Error(data.error || 'Error desconocido'); 

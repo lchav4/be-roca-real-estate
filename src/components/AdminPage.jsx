@@ -37,6 +37,9 @@ const NewPropertyForm = () => {
       forRent: "¿Ofrece la propiedad para alquiler a largo plazo?",
       propertyImage: "Imagen de la propiedad",
       publish: "Publicar",
+      successMessage: "Propiedad anunciada con éxito",
+      errorMessage: "Error al anunciar la propiedad",
+
     },
     en: {
       newAd: "New Ad",
@@ -53,6 +56,8 @@ const NewPropertyForm = () => {
       forRent: "Is the property for rent?",
       propertyImage: "Property Image",
       publish: "Publish",
+      successMessage: "Property listed successfully",
+      errorMessage: "Error listing the property",
     },
   };
 
@@ -126,10 +131,11 @@ const NewPropertyForm = () => {
 
       const data = await response.json();
       if (response.status === 200) {
-        toast.success("Propiedad anunciada con éxito");
+        toast.success(texts[language].successMessage); 
       } else {
         throw new Error(data.error);
       }
+  
 
       setFormData({
         region: "",
@@ -146,7 +152,7 @@ const NewPropertyForm = () => {
       setImages([]);
       setImagePreviews([]);
     } catch (error) {
-      toast.error(error.message);
+      toast.error(texts[language].errorMessage);
     }
   };
 

@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import { useAuth } from './AuthProvider';
 import { useLanguage } from '../app/LanguageContext';
-import { Hourglass } from 'react-loader-spinner'
+import { Hourglass } from 'react-loader-spinner';
 
 const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
   const [email, setEmail] = useState('');
@@ -22,7 +22,10 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
       password: 'Contraseña',
       forgotPassword: '¿Olvidó su contraseña?',
       noAccount: '¿No tiene cuenta? Regístrese',
-      continue: 'Continuar'
+      continue: 'Continuar',
+      requiredFields: 'Email y contraseña son requeridos',
+      incorrectPassword: 'Contraseña incorrecta',
+      userNotFound: 'Usuario no encontrado',
     },
     en: {
       welcome: 'Welcome',
@@ -30,16 +33,28 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
       password: 'Password',
       forgotPassword: 'Forgot your password?',
       noAccount: 'Don’t have an account? Sign up',
-      continue: 'Continue'
+      continue: 'Continue',
+      requiredFields: 'Email and password are required',
+      incorrectPassword: 'Incorrect password',
+      userNotFound: 'User not found',
     },
+  };
+
+  const translateError = (error) => {
+    if (error.message.includes("Contraseña incorrecta") || error.message.includes("Incorrect password")) {
+      return texts[language].incorrectPassword;
+    }
+    if (error.message.includes("Usuario no encontrado") || error.message.includes("User not found")) {
+      return texts[language].userNotFound;
+    }
+    return error.message; 
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log('Form submitted', { email, password });
       if (email.length === 0 || password.length === 0)
-        throw new Error('Email and password are required');
+        throw new Error(texts[language].requiredFields);
       setLoading(true);
 
       const response = await fetch('/api/login', { 
@@ -51,8 +66,8 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
       });
 
       const data = await response.json();
-
       setLoading(false);
+
       if (response.status === 200) {
         const { token } = data;
         login(token);
@@ -62,8 +77,7 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
       }
     } catch (error) {
       setLoading(false);
-      toast.error(error.message); 
-      console.error('An error occurred', error);
+      toast.error(translateError(error)); 
     }
   };
 
@@ -116,9 +130,8 @@ const Login = ({ onRegisterClick, onForgotPasswordClick }) => {
 
             <Button variant="dark" type="submit" className="w-100 d-flex justify-content-center align-items-center">
               {loading ? 
-              (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
+              (<Hourglass colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
               texts[language].continue}
-              
             </Button>
           </Form>
           <div className="text-center mt-3">

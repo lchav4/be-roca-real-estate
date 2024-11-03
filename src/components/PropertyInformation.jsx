@@ -48,7 +48,9 @@ const PropertyInformation = ({ property }) => {
       back: 'Regresar',
       deleteProperty: 'Eliminar propiedad',
       confirmDelete: '¿Está seguro de que desea eliminar esta propiedad?',
-      edit: 'Editar propiedad'
+      edit: 'Editar propiedad',
+      editSuccess: '¡Propiedad actualizada con éxito!',
+        editError: 'Error al actualizar la propiedad.',
     },
     en: {
       title: 'Property Title:',
@@ -72,7 +74,9 @@ const PropertyInformation = ({ property }) => {
       back: 'Back',
       deleteProperty: 'Delete Property',
       confirmDelete: 'Are you sure you want to delete this property?',
-      edit: 'Edit property'
+      edit: 'Edit property',
+      editSuccess: 'Property updated successfully!',
+      editError: 'Error updating property.',
     }
   };
 
@@ -169,49 +173,43 @@ const PropertyInformation = ({ property }) => {
     const { name, value } = e.target;
     setEditedProperty((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleEditSubmit = async () => {
     try {
-      const response = await fetch('/api/properties', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-  
-      // Check the response status and log the raw response
-      if (!response.ok) {
-        throw new Error('Failed to fetch the existing property');
-      }
-  
-      const existingProperty = await response.json();
-      console.log('Existing Property:', existingProperty); // Log the fetched property
-  
-      const updatedProperty = {
-        ...existingProperty,
-        ...editedProperty,
-      };
-  
-      const updateResponse = await fetch(`/api/properties`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedProperty),
-      });
-  
-      if (updateResponse.ok) {
-        toast.success("Property updated successfully!");
-        handleEditModalClose();
-      } else {
-        const errorText = await updateResponse.text(); // Get the raw error message
-        throw new Error(`Error updating property: ${errorText}`);
-      }
+        const response = await fetch('/api/properties', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch the existing property');
+        }
+
+        const existingProperty = await response.json();
+        const updatedProperty = {
+            ...existingProperty,
+            ...editedProperty,
+        };
+
+        const updateResponse = await fetch(`/api/properties`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedProperty),
+        });
+
+        if (updateResponse.ok) {
+            toast.success(texts[language].editSuccess);
+            handleEditModalClose();
+        } else {
+            const errorText = await updateResponse.text(); 
+            throw new Error(`Error updating property: ${errorText}`);
+        }
     } catch (error) {
-      console.error('Error:', error); // Log any errors that occur
-      toast.error(error.message);
+        console.error('Error:', error); 
+        toast.error(texts[language].editError);
     }
-  };
-  
-  
-  
-  
+};
+
+
 
   const items = property.imagesURL.map((imageURL, index) => (
     <img

@@ -25,7 +25,12 @@ const Register = ({ onBackToLogin }) => {
       password: 'Contraseña',
       confirmPassword: 'Confirmar contraseña',
       toLogin: 'Volver al inicio de sesión',
-      continue: 'Continuar'
+      continue: 'Continuar',
+      requiredFields: 'Todos los campos son requeridos',
+      passwordsNotMatch: 'Las contraseñas no coinciden',
+      userExists: 'El usuario ya existe',
+      userCreated: 'Usuario creado correctamente',
+      createError: 'Error al crear usuario',
     },
     en: {
       title: 'Create an account',
@@ -35,21 +40,34 @@ const Register = ({ onBackToLogin }) => {
       password: 'Password',
       confirmPassword: 'Confirm password',
       toLogin: 'Go back to log in',
-      continue: 'Continue'
+      continue: 'Continue',
+      requiredFields: 'All fields are required',
+      passwordsNotMatch: 'Passwords do not match',
+      userExists: 'User already exists',
+      userCreated: 'User created successfully',
+      createError: 'Error creating user',
     },
+  };
+
+  const translateError = (error) => {
+    if (error.message.includes("El usuario ya existe") || error.message.includes("User already exists")) {
+      return texts[language].userExists;
+    }
+    return texts[language].createError;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     
     try {
-      if (email.length === 0 || name.length === 0 || password.length === 0 || confirmPassword.length === 0) {
-        return toast.info('Todos los campos son requeridos');
+      if (!email || !name || !password || !confirmPassword) {
+        return toast.info(texts[language].requiredFields);
       }
       if (password !== confirmPassword) {
-        return toast.error('Las contraseñas no coinciden');
+        return toast.error(texts[language].passwordsNotMatch);
       }
       setLoading(true);
+      
       const response = await fetch('/api/register', { 
         method: 'POST',
         headers: {
@@ -60,17 +78,18 @@ const Register = ({ onBackToLogin }) => {
 
       const data = await response.json();
       setLoading(false);
+      
       if (response.status === 200) {
-        toast.success('Usuario creado correctamente');
+        toast.success(texts[language].userCreated);
         setTimeout(() => {
           onBackToLogin();
         }, 2000);
       } else {
-        throw new Error(data.error); 
+        throw new Error(data.error);
       }
     } catch (error) {
       setLoading(false);
-      toast.error(error.message || 'Error al crear usuario'); 
+      toast.error(translateError(error));
     }
   };
 
@@ -140,7 +159,7 @@ const Register = ({ onBackToLogin }) => {
               </Form.Group>
               <Button variant="dark" type="submit" className="w-100">
                 {loading ?
-                (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
+                (<Hourglass colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
                 texts[language].continue}
               </Button>
               <div className="text-center mt-3">

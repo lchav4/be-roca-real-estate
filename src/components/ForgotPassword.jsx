@@ -15,20 +15,25 @@ const ForgotPassword = ({ onBackToLogin }) => {
       title: 'Restablecer contraseña',
       email: 'Ingresa el correo electrónico que usaste para registrarte',
       sendLink: 'Enviar enlace de restablecimiento',
-      toLogin: 'Regresar a iniciar sesión'
+      toLogin: 'Regresar a iniciar sesión',
+      emailSent: 'Se ha enviado un correo para restablecer la contraseña',
+      userNotFound: 'Usuario no encontrado',
+      errorSendingEmail: 'Error al enviar el correo de restablecimiento',
     },
     en: {
       title: 'Reset password',
       email: 'Enter the email address you used to sign up',
       sendLink: 'Send reset link',
-      toLogin: 'Go back to log in'
+      toLogin: 'Go back to log in',
+      emailSent: 'An email has been sent to reset your password',
+      userNotFound: 'User not found',
+      errorSendingEmail: 'Error sending the reset password email',
     },
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const actualLanguage=language;
     try {
       setLoading(true);
       if (email.length === 0) throw new Error('Email is required');
@@ -38,19 +43,23 @@ const ForgotPassword = ({ onBackToLogin }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email,actualLanguage }),
+        body: JSON.stringify({ email, actualLanguage: language }),
       });
 
       const data = await response.json();
       setLoading(false);
+      
       if (response.status === 200) {
-        toast.success('An email has been sent to reset your password');
+        toast.success(texts[language].emailSent);  // Mensaje de éxito
+      } else if (response.status === 404) {
+        toast.error(texts[language].userNotFound); // Usuario no encontrado
       } else {
-        throw new Error(data.error); 
+        throw new Error(data.error);
       }
     } catch (error) {
       setLoading(false);
-      toast.error(error.message); 
+      // Mensaje de error genérico
+      toast.error(texts[language].errorSendingEmail); 
     }
   };
 
@@ -80,7 +89,7 @@ const ForgotPassword = ({ onBackToLogin }) => {
             </Form.Group>
             <Button variant="dark" type="submit" className="w-100">
               {loading ?
-              (<Hourglass  colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
+              (<Hourglass colors={['#DDD', '#AAA']} radius={"5px"} height={30} width={30} />) :
               texts[language].sendLink}
             </Button>
           </Form>

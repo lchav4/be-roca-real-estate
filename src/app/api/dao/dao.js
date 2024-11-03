@@ -28,13 +28,11 @@ export const getUser = async (email, password) => {
 export const updatePropertyByName = async (propertyName, updatedProperty) => {
   await connectDB();
 
-  // Check if the property exists based on the property name
   const existingProperty = await db.collection("properties").findOne({ title: propertyName });
   if (!existingProperty) {
     throw new Error("Propiedad no encontrada");
   }
 
-  // Prepare the update object, filtering out any fields that are not being updated
   const updateData = {};
   if (updatedProperty.region) updateData.region = updatedProperty.region;
   if (updatedProperty.location) updateData.location = updatedProperty.location;
@@ -63,7 +61,6 @@ export const updateProperty = async (propertyId, updatedFields) => {
 
   const collection = db.collection("properties");
 
-  // Only update provided fields, keeping others unchanged
   const updateData = {};
   for (const key in updatedFields) {
     if (updatedFields[key] !== undefined) {
@@ -72,7 +69,7 @@ export const updateProperty = async (propertyId, updatedFields) => {
   }
 
   const result = await collection.updateOne(
-    { _id: new ObjectId(propertyId) }, // assuming you need the property ID here
+    { _id: new ObjectId(propertyId) }, 
     { $set: updateData }
   );
 
@@ -301,3 +298,41 @@ export const deleteUser = async (email) => {
   return result.deletedCount > 0; 
 };
 
+export const deleteProperty = async (propertyId, email) => {
+  try {
+    console.log("ITS WORKING IN DAO");
+    const { db } = await connectDB();
+
+    const user = await db.collection("users").findOne({ email });
+    if (!user || user.role !== "ADMIN") {
+      throw new Error("No tienes permisos para eliminar propiedades");
+    }
+
+    const property = await db.collection("properties").findOne({
+      _id: new ObjectId(propertyId),
+    });
+    if (!property) {
+      throw new Error("Propiedad no encontrada");
+    }
+
+    const result = await db.collection("properties").deleteOne({
+      _id: new ObjectId(propertyId),
+    });
+
+    await db
+      .collection("users")
+      .updateMany(
+        { favorites: propertyId },
+        { $pull: { favorites: propertyId } }
+      );
+
+    if (result.deletedCount === 1) {
+      return true;
+    } else {
+      throw new Error("No se pudo eliminar la propiedad");
+    }
+  } catch (error) {
+    console.error("Error en deleteProperty:", error);
+    throw error;
+  }
+};

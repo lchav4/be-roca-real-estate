@@ -21,6 +21,8 @@ const PropertyDeleteButton = ({ property, toPropertyResults = () => {} }) => {
         "¿Está seguro que desea eliminar esta propiedad? Esta acción no se puede deshacer.",
       cancel: "Cancelar",
       confirm: "Confirmar",
+      deleteSuccess: "Propiedad eliminada exitosamente",
+      deleteError: "Error al eliminar la propiedad",
     },
     en: {
       deleteProperty: "Delete property",
@@ -29,6 +31,8 @@ const PropertyDeleteButton = ({ property, toPropertyResults = () => {} }) => {
         "Are you sure you want to delete this property? This action cannot be undone.",
       cancel: "Cancel",
       confirm: "Confirm",
+      deleteSuccess: "Property deleted successfully",
+      deleteError: "Error deleting property",
     },
   };
 
@@ -55,14 +59,13 @@ const PropertyDeleteButton = ({ property, toPropertyResults = () => {} }) => {
       });
 
       if (response.status === 200) {
-        toast.success("Propiedad eliminada exitosamente");
+        toast.success(texts[language].deleteSuccess);
         setShowModal(false);
 
-        
         const propertiesResponse = await fetch("/api/getProperties", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ filters: {} }), 
+          body: JSON.stringify({ filters: {} }),
         });
 
         if (!propertiesResponse.ok) {
@@ -70,10 +73,9 @@ const PropertyDeleteButton = ({ property, toPropertyResults = () => {} }) => {
         }
 
         const updatedProperties = await propertiesResponse.json();
-
         toPropertyResults(updatedProperties);
       } else {
-        throw new Error("Error al eliminar la propiedad");
+        throw new Error(texts[language].deleteError);
       }
     } catch (error) {
       toast.error(error.message);
@@ -119,7 +121,6 @@ const PropertyDeleteButton = ({ property, toPropertyResults = () => {} }) => {
       `}</style>
     </>
   );
-  toPropertyResults;
 };
 
 export default PropertyDeleteButton;

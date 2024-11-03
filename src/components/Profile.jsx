@@ -16,11 +16,10 @@ const Profile = ({ user, toPropertyResults }) => {
     email: user.email,
     name: user.username,
   });
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { language } = useLanguage();
-  const { auth ,logout} = useAuth();
-
+  const { auth, logout } = useAuth();
 
   const texts = {
     es: {
@@ -99,21 +98,21 @@ const Profile = ({ user, toPropertyResults }) => {
         throw new Error(data.error || texts[language].errorUpdate);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message); 
     }
   };
 
   const handleDeleteAccount = () => {
-    setIsModalOpen(true); 
+    setIsModalOpen(true);
   };
 
   const confirmDeleteAccount = async () => {
     setIsModalOpen(false); 
-
+  
     try {
       const decodedToken = jwtDecode(auth);
       const email = decodedToken.email;
-
+  
       const response = await fetch("/api/deleteUser", {
         method: "DELETE",
         headers: {
@@ -121,19 +120,19 @@ const Profile = ({ user, toPropertyResults }) => {
         },
         body: JSON.stringify({ email }),
       });
-
+  
       if (response.ok) {
-        toast.success("Tu cuenta ha sido eliminada.");
-        logout();
-        
+        toast.success(texts[language].deleteAccount); 
+        logout(); 
       } else {
-        throw new Error("Error al eliminar la cuenta.");
+        const data = await response.json();
+        throw new Error(data.error || "Error al eliminar la cuenta."); 
       }
     } catch (error) {
       toast.error(error.message);
     }
   };
-
+  
   const handleViewFavorites = async () => {
     const decodedToken = jwtDecode(auth);
     const email = decodedToken.email;
