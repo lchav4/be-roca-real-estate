@@ -23,6 +23,7 @@ const PropertyInformation = ({ property }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedProperty, setEditedProperty] = useState({ ...property });
   const { auth } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
   const { language } = useLanguage(); // Usar el idioma actual
 
   const texts = {
@@ -112,7 +113,12 @@ const PropertyInformation = ({ property }) => {
   ];
 
  
-  
+  useEffect(() => {
+    if (auth) {
+      const decodedToken = jwtDecode(auth);
+      setIsAdmin(decodedToken.role === "ADMIN");
+    }
+  }, [auth]);
 
   useEffect(() => {
     const decodedToken = jwtDecode(auth);
@@ -405,9 +411,11 @@ const PropertyInformation = ({ property }) => {
             {favorite ? <FaHeart /> : <FaRegHeart />}
             {favorite ? texts[language].savedFavorites : texts[language].saveFavorites}
           </Button>
-          <Button variant="outline-info" onClick={() => setShowEditModal(true)}>
-            {texts[language].edit}
-          </Button>
+          {isAdmin && (
+            <Button variant="outline-info" onClick={() => setShowEditModal(true)}>
+              {texts[language].edit}
+            </Button>
+          )}
         </div>
       </Col>
     </Row>
